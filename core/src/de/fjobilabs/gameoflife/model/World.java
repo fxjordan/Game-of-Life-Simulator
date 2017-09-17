@@ -11,6 +11,9 @@ public interface World {
     
     public int getHeight();
     
+    public int getCenterX();
+    public int getCenterY();
+    
     public CellContext getCellContext(int x, int y);
     
     public int getCellState(int x, int y);

@@ -37,6 +37,16 @@ public class FixedSizeBorderedWorld implements World {
     }
     
     @Override
+    public int getCenterX() {
+        return this.width / 2;
+    }
+    
+    @Override
+    public int getCenterY() {
+        return this.height / 2;
+    }
+    
+    @Override
     public CellContext getCellContext(int x, int y) {
         validateCellPosition(x, y);
         if (isBorderCell(x, y)) {

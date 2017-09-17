@@ -1,7 +1,9 @@
 package de.fjobilabs.gameoflife;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.TextureLoader.TextureParameter;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 
 /**
  * @author Felix Jordan
@@ -11,8 +13,10 @@ import com.badlogic.gdx.graphics.Texture;
 public class GameOfLifeAssetManager {
     
     public static final String LOADING_IMAGE = "loading.png";
-    public static final String DEAD_CELL = "dead_cell_2.png";
-    public static final String ALIVE_CELL = "alive_cell_1.png";
+    public static final String DEAD_CELL = "dead_cell_simple_border_small_2.png";
+    public static final String ALIVE_CELL = "alive_cell_simple_border_small_2.png";
+    public static final String DEAD_CELL_NO_BORDER = "dead_cell_simple.png";
+    public static final String ALIVE_CELL_NO_BORDER = "alive_cell_simple_2.png";
     
     private final AssetManager assetManager;
     
@@ -43,7 +47,13 @@ public class GameOfLifeAssetManager {
     
     private void loadImages() {
         this.assetManager.load(LOADING_IMAGE, Texture.class);
-        this.assetManager.load(DEAD_CELL, Texture.class);
-        this.assetManager.load(ALIVE_CELL, Texture.class);
+        TextureParameter textureParameter = new TextureParameter();
+        textureParameter.genMipMaps = true;
+        textureParameter.minFilter = TextureFilter.MipMapLinearLinear;
+        textureParameter.magFilter = TextureFilter.MipMapLinearLinear;
+        this.assetManager.load(DEAD_CELL, Texture.class, textureParameter);
+        this.assetManager.load(ALIVE_CELL, Texture.class, textureParameter);
+        this.assetManager.load(DEAD_CELL_NO_BORDER, Texture.class, textureParameter);
+        this.assetManager.load(ALIVE_CELL_NO_BORDER, Texture.class, textureParameter);
     }
 }

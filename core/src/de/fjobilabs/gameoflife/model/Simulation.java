@@ -17,11 +17,13 @@ public class Simulation {
     
     private World world;
     private RuleSet ruleSet;
+    private boolean running;
     private int generation;
     
     public Simulation(World world, RuleSet ruleSet) {
         this.world = world;
         this.ruleSet = ruleSet;
+        this.running = true;
         this.generation = 0;
     }
     
@@ -29,6 +31,10 @@ public class Simulation {
      * Apples the current {@link RuleSet} to the {@link World}.
      */
     public void update() {
+        if (!this.running) {
+            return;
+        }
+        
         int worldWidth = this.world.getWidth();
         int worldHeight = this.world.getHeight();
         int[][] newCellStatesBuffer = new int[worldWidth][worldHeight];
@@ -87,6 +93,14 @@ public class Simulation {
     
     public RuleSet getRuleSet() {
         return ruleSet;
+    }
+    
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+    
+    public boolean isRunning() {
+        return running;
     }
     
     public int getGeneration() {

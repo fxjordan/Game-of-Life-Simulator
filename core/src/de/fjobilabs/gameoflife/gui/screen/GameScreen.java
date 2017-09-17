@@ -2,6 +2,7 @@ package de.fjobilabs.gameoflife.gui.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Logger;
 
@@ -27,7 +28,7 @@ public class GameScreen extends ScreenAdapter {
     private static final float SCENE_WIDTH = 800;
     private static final float SCENE_HEIGHT = 480;
     
-    private static final int TICKS_PER_SECOND = 3;
+    private static final int TICKS_PER_SECOND = 20;
     private static final float TICK = 1.0f / (float) TICKS_PER_SECOND;
     private static final float MAX_UPDATES_PER_FRAME = 5;
     
@@ -41,26 +42,83 @@ public class GameScreen extends ScreenAdapter {
     private GameController gameController;
     private float time;
     
+    private FPSLogger fpsLogger;
+    
     public GameScreen(GameOfLifeAssetManager assetManager, GameOfLifeScreenManager screenManager) {
         this.assetManager = assetManager;
         this.screenManager = screenManager;
         
         // Test code:
-        World world = new FixedSizeBorderedWorld(20, 20);
+        World world = new FixedSizeBorderedWorld(500, 500);
         
-        world.setCellState(10, 11, Cell.ALIVE);
-        world.setCellState(10, 10, Cell.ALIVE);
-        world.setCellState(10, 9, Cell.ALIVE);
-        world.setCellState(9, 10, Cell.ALIVE);
-        world.setCellState(11, 11, Cell.ALIVE);
+//        createPopulation(world, 100, 100);
+//        createPopulation(world, 10, 10);
+//        createPopulation(world, 50, 50);
+//        createPopulation(world, 50, 150);
+//        createPopulation(world, 150, 50);
+//        createPopulation(world, 150, 150);
+        
+//        createNicePopulation(world, 60, 60);
+//        createNicePopulation(world, 180, 60);
+//        createNicePopulation(world, 60, 180);
+//        createNicePopulation(world, 180, 180);
+        
+//        createNicePopulation(world, 120, 120);
+        
+//        createNicePopulation(world, 50, 50);
         
         RuleSet ruleSet = new StandardRuleSet();
         this.simulation = new Simulation(world, ruleSet);
+        this.simulation.setRunning(false);
         
         this.worldRenderer = new WorldRenderer(assetManager, world);
         
-        this.gameController = new GameController(this.worldRenderer);
+        this.gameController = new GameController(this.simulation, this.worldRenderer);
         Gdx.input.setInputProcessor(this.gameController);
+        
+        this.fpsLogger = new FPSLogger();
+    }
+    
+    private void createNicePopulation(World world, int x, int y) {
+        world.setCellState(x-6, y, Cell.ALIVE);
+        world.setCellState(x-5, y-1, Cell.ALIVE);
+        world.setCellState(x-5, y+1, Cell.ALIVE);
+        world.setCellState(x-4, y-1, Cell.ALIVE);
+        world.setCellState(x-4, y+1, Cell.ALIVE);
+        world.setCellState(x-3, y, Cell.ALIVE);
+        world.setCellState(x-3, y-1, Cell.ALIVE);
+        
+        world.setCellState(x+6, y, Cell.ALIVE);
+        world.setCellState(x+5, y-1, Cell.ALIVE);
+        world.setCellState(x+5, y+1, Cell.ALIVE);
+        world.setCellState(x+4, y-1, Cell.ALIVE);
+        world.setCellState(x+4, y+1, Cell.ALIVE);
+        world.setCellState(x+3, y, Cell.ALIVE);
+        world.setCellState(x+3, y+1, Cell.ALIVE);
+        
+        world.setCellState(x, y+6, Cell.ALIVE);
+        world.setCellState(x-1, y+5, Cell.ALIVE);
+        world.setCellState(x+1, y+5, Cell.ALIVE);
+        world.setCellState(x-1, y+4, Cell.ALIVE);
+        world.setCellState(x+1, y+4, Cell.ALIVE);
+        world.setCellState(x, y+3, Cell.ALIVE);
+        world.setCellState(x-1, y+3, Cell.ALIVE);
+        
+        world.setCellState(x, y-6, Cell.ALIVE);
+        world.setCellState(x-1, y-5, Cell.ALIVE);
+        world.setCellState(x+1, y-5, Cell.ALIVE);
+        world.setCellState(x-1, y-4, Cell.ALIVE);
+        world.setCellState(x+1, y-4, Cell.ALIVE);
+        world.setCellState(x, y-3, Cell.ALIVE);
+        world.setCellState(x+1, y-3, Cell.ALIVE);
+    }
+    
+    private void createPopulation(World world, int x, int y) {
+        world.setCellState(x, y+1, Cell.ALIVE);
+        world.setCellState(x, y, Cell.ALIVE);
+        world.setCellState(x, y-1, Cell.ALIVE);
+        world.setCellState(x-1, y, Cell.ALIVE);
+        world.setCellState(x+1, y+1, Cell.ALIVE);
     }
     
     @Override
@@ -80,6 +138,8 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         this.worldRenderer.render();
+        
+        this.fpsLogger.log();
     }
     
     public void update(float delta) {
@@ -98,5 +158,10 @@ public class GameScreen extends ScreenAdapter {
     
     public void tick() {
         this.simulation.update();
+    }
+    
+    @Override
+    public void dispose() {
+        this.worldRenderer.dispose();
     }
 }
