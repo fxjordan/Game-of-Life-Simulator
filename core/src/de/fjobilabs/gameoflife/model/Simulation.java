@@ -39,12 +39,15 @@ public class Simulation {
         int worldHeight = this.world.getHeight();
         int[][] newCellStatesBuffer = new int[worldWidth][worldHeight];
         
+        long startTime = System.currentTimeMillis();
         // Calculate new states
         for (int x = 0; x < worldWidth; x++) {
             for (int y = 0; y < worldHeight; y++) {
                 newCellStatesBuffer[x][y] = calcNewCellState(x, y);
             }
         }
+        long calcTime = System.currentTimeMillis() - startTime;
+        logger.debug("Calculated " + worldWidth * worldHeight + " cells in " + calcTime + "ms");
         
         // Updates the world
         for (int x = 0; x < worldWidth; x++) {

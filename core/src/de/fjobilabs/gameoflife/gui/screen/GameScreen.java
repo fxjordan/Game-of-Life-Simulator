@@ -14,8 +14,11 @@ import de.fjobilabs.gameoflife.model.Cell;
 import de.fjobilabs.gameoflife.model.RuleSet;
 import de.fjobilabs.gameoflife.model.Simulation;
 import de.fjobilabs.gameoflife.model.World;
+import de.fjobilabs.gameoflife.model.rules.GameOfLifeRuleSet;
+import de.fjobilabs.gameoflife.model.rules.StandardGameOfLifeRuleSet;
 import de.fjobilabs.gameoflife.model.rules.standard.StandardRuleSet;
 import de.fjobilabs.gameoflife.model.worlds.FixedSizeBorderedWorld;
+import de.fjobilabs.gameoflife.model.worlds.FixedSizeTorusWorld;
 import de.fjobilabs.libgdx.util.LoggerFactory;
 
 /**
@@ -28,7 +31,7 @@ public class GameScreen extends ScreenAdapter {
     private static final float SCENE_WIDTH = 800;
     private static final float SCENE_HEIGHT = 480;
     
-    private static final int TICKS_PER_SECOND = 20;
+    private static final int TICKS_PER_SECOND = 2;
     private static final float TICK = 1.0f / (float) TICKS_PER_SECOND;
     private static final float MAX_UPDATES_PER_FRAME = 5;
     
@@ -49,7 +52,8 @@ public class GameScreen extends ScreenAdapter {
         this.screenManager = screenManager;
         
         // Test code:
-        World world = new FixedSizeBorderedWorld(500, 500);
+//        World world = new FixedSizeBorderedWorld(10, 10);
+        World world = new FixedSizeTorusWorld(50, 50);
         
 //        createPopulation(world, 100, 100);
 //        createPopulation(world, 10, 10);
@@ -67,7 +71,9 @@ public class GameScreen extends ScreenAdapter {
         
 //        createNicePopulation(world, 50, 50);
         
-        RuleSet ruleSet = new StandardRuleSet();
+//        RuleSet ruleSet = new GameOfLifeRuleSet("1357/1357", new int[] {1, 3, 5, 7}, new int[] {1, 3, 5, 7});
+//        RuleSet ruleSet = GameOfLifeRuleSet.parse("1357/1357");
+        RuleSet ruleSet = new StandardGameOfLifeRuleSet();
         this.simulation = new Simulation(world, ruleSet);
         this.simulation.setRunning(false);
         
