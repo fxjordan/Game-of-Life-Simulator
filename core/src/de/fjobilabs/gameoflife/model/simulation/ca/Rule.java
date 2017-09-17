@@ -1,4 +1,6 @@
-package de.fjobilabs.gameoflife.model;
+package de.fjobilabs.gameoflife.model.simulation.ca;
+
+import de.fjobilabs.gameoflife.model.CellContext;
 
 /**
  * @author Felix Jordan

@@ -1,5 +1,9 @@
 package de.fjobilabs.gameoflife.model;
 
+import com.badlogic.gdx.utils.Logger;
+
+import de.fjobilabs.libgdx.util.LoggerFactory;
+
 /**
  * Defines default behavior for a {@link Simulation} implementation.<br>
  * This class stores the world, state and generation number of the simulation
@@ -13,6 +17,8 @@ package de.fjobilabs.gameoflife.model;
  */
 public abstract class AbstractSimulation implements Simulation {
     
+    private static final Logger logger = LoggerFactory.getLogger(AbstractSimulation.class, Logger.DEBUG);
+    
     protected World world;
     private boolean running;
     private int generation;
@@ -24,6 +30,7 @@ public abstract class AbstractSimulation implements Simulation {
     @Override
     public void update() {
         if (this.running) {
+            logger.debug("Updating generation " + this.generation);
             doUpdate();
             this.generation++;
         }

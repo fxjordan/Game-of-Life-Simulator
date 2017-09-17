@@ -10,11 +10,14 @@ import de.fjobilabs.gameoflife.GameOfLifeAssetManager;
 import de.fjobilabs.gameoflife.GameOfLifeScreenManager;
 import de.fjobilabs.gameoflife.gui.GameController;
 import de.fjobilabs.gameoflife.gui.WorldRenderer;
-import de.fjobilabs.gameoflife.model.CellularAutomatonSimulation;
-import de.fjobilabs.gameoflife.model.RuleSet;
 import de.fjobilabs.gameoflife.model.Simulation;
 import de.fjobilabs.gameoflife.model.World;
-import de.fjobilabs.gameoflife.model.rules.GameOfLifeRuleSet;
+import de.fjobilabs.gameoflife.model.simulation.CellularAutomatonSimulation;
+import de.fjobilabs.gameoflife.model.simulation.ca.ArrayPattern;
+import de.fjobilabs.gameoflife.model.simulation.ca.Pattern;
+import de.fjobilabs.gameoflife.model.simulation.ca.RuleSet;
+import de.fjobilabs.gameoflife.model.simulation.ca.rules.GameOfLifeRuleSet;
+import de.fjobilabs.gameoflife.model.simulation.ca.rules.StandardGameOfLifeRuleSet;
 import de.fjobilabs.gameoflife.model.worlds.FixedSizeTorusWorld;
 import de.fjobilabs.libgdx.util.LoggerFactory;
 
@@ -28,7 +31,7 @@ public class GameScreen extends ScreenAdapter {
     private static final float SCENE_WIDTH = 800;
     private static final float SCENE_HEIGHT = 480;
     
-    private static final int TICKS_PER_SECOND = 2;
+    private static final int TICKS_PER_SECOND = 5;
     private static final float TICK = 1.0f / (float) TICKS_PER_SECOND;
     private static final float MAX_UPDATES_PER_FRAME = 5;
     
@@ -50,14 +53,24 @@ public class GameScreen extends ScreenAdapter {
         
         // Test code:
         // World world = new FixedSizeBorderedWorld(10, 10);
+        
         World world = new FixedSizeTorusWorld(500, 500);
+        
+        Pattern pattern = new ArrayPattern(3, 3,
+                new int[][] {
+            new int[] {0, 1, 0},
+            new int[] {0, 0, 1},
+            new int[] {1, 1, 1}});
+        
+        pattern.apply(world, 250, 250);
         
         // RuleSet ruleSet = new GameOfLifeRuleSet("1357/1357", new int[] {1, 3,
         // 5, 7}, new int[] {1, 3, 5, 7});
-        RuleSet ruleSet = GameOfLifeRuleSet.parse("1357/1357");
-        // RuleSet ruleSet = new StandardGameOfLifeRuleSet();
+         RuleSet ruleSet = GameOfLifeRuleSet.parse("1357/1357");
+//        RuleSet ruleSet = new StandardGameOfLifeRuleSet();
         
         this.simulation = new CellularAutomatonSimulation(world, ruleSet);
+        // this.simulation = new LangtonsAntSimulation(world);
         
         this.worldRenderer = new WorldRenderer(assetManager, world);
         

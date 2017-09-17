@@ -1,4 +1,4 @@
-package de.fjobilabs.gameoflife.model;
+package de.fjobilabs.gameoflife.model.simulation.ca;
 
 /**
  * @author Felix Jordan

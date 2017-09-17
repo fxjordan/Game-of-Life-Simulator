@@ -1,9 +1,9 @@
-package de.fjobilabs.gameoflife.model.rules;
+package de.fjobilabs.gameoflife.model.simulation.ca.rules;
 
 import de.fjobilabs.gameoflife.model.Cell;
 import de.fjobilabs.gameoflife.model.CellContext;
-import de.fjobilabs.gameoflife.model.Rule;
-import de.fjobilabs.gameoflife.model.RuleSet;
+import de.fjobilabs.gameoflife.model.simulation.ca.Rule;
+import de.fjobilabs.gameoflife.model.simulation.ca.RuleSet;
 
 /**
  * @author Felix Jordan

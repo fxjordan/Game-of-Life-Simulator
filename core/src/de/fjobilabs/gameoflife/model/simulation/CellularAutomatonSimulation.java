@@ -1,9 +1,15 @@
-package de.fjobilabs.gameoflife.model;
+package de.fjobilabs.gameoflife.model.simulation;
 
 import java.util.Arrays;
 
 import com.badlogic.gdx.utils.Logger;
 
+import de.fjobilabs.gameoflife.model.AbstractSimulation;
+import de.fjobilabs.gameoflife.model.CellContext;
+import de.fjobilabs.gameoflife.model.SimulationException;
+import de.fjobilabs.gameoflife.model.World;
+import de.fjobilabs.gameoflife.model.simulation.ca.Rule;
+import de.fjobilabs.gameoflife.model.simulation.ca.RuleSet;
 import de.fjobilabs.libgdx.util.LoggerFactory;
 
 /**
