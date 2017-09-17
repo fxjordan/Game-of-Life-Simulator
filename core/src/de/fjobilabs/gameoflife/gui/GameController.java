@@ -1,13 +1,14 @@
 package de.fjobilabs.gameoflife.gui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 
 import de.fjobilabs.gameoflife.model.Cell;
 import de.fjobilabs.gameoflife.model.Simulation;
+import de.fjobilabs.gameoflife.model.World;
 
 /**
  * @author Felix Jordan
@@ -47,16 +48,25 @@ public class GameController extends InputAdapter {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Buttons.LEFT) {
-            this.touchPoint.set(screenX, screenY);
-            this.worldRenderer.touchToWorld(this.touchPoint);
-            this.simulation.getWorld().setCellState((int) this.touchPoint.x, (int) this.touchPoint.y, Cell.ALIVE);
+            setCellState(screenX, screenY, Cell.ALIVE);
         }
         if (button == Buttons.RIGHT) {
-            this.touchPoint.set(screenX, screenY);
-            this.worldRenderer.touchToWorld(this.touchPoint);
-            this.simulation.getWorld().setCellState((int) this.touchPoint.x, (int) this.touchPoint.y, Cell.DEAD);
+            setCellState(screenX, screenY, Cell.DEAD);
         }
         return super.touchDown(screenX, screenY, pointer, button);
+    }
+    
+    private boolean setCellState(int screenX, int screenY, int state) {
+        this.touchPoint.set(screenX, screenY);
+        this.worldRenderer.touchToWorld(this.touchPoint);
+        int x = (int) this.touchPoint.x;
+        int y = (int) this.touchPoint.y;
+        World world = this.simulation.getWorld();
+        if (world.isCellPositionValid(x, y)) {
+            world.setCellState(x, y, state);
+            return true;
+        }
+        return false;
     }
     
     @Override

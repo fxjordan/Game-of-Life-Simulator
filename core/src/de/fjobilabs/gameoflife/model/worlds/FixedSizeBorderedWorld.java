@@ -92,8 +92,13 @@ public class FixedSizeBorderedWorld implements World {
         this.cells[x][y] = state;
     }
     
+    @Override
+    public boolean isCellPositionValid(int x, int y) {
+        return x >= 0 && x < this.width && y >= 0 && y < this.height;
+    }
+    
     private void validateCellPosition(int x, int y) {
-        if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
+        if (!isCellPositionValid(x, y)) {
             throw new IllegalArgumentException("Invalid cell position: x=" + x + ", y=" + y);
         }
     }

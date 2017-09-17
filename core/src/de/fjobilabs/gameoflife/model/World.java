@@ -19,4 +19,6 @@ public interface World {
     public int getCellState(int x, int y);
     
     public void setCellState(int x, int y, int state);
+    
+    public boolean isCellPositionValid(int x, int y);
 }

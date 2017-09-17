@@ -10,14 +10,11 @@ import de.fjobilabs.gameoflife.GameOfLifeAssetManager;
 import de.fjobilabs.gameoflife.GameOfLifeScreenManager;
 import de.fjobilabs.gameoflife.gui.GameController;
 import de.fjobilabs.gameoflife.gui.WorldRenderer;
-import de.fjobilabs.gameoflife.model.Cell;
+import de.fjobilabs.gameoflife.model.CellularAutomatonSimulation;
 import de.fjobilabs.gameoflife.model.RuleSet;
 import de.fjobilabs.gameoflife.model.Simulation;
 import de.fjobilabs.gameoflife.model.World;
 import de.fjobilabs.gameoflife.model.rules.GameOfLifeRuleSet;
-import de.fjobilabs.gameoflife.model.rules.StandardGameOfLifeRuleSet;
-import de.fjobilabs.gameoflife.model.rules.standard.StandardRuleSet;
-import de.fjobilabs.gameoflife.model.worlds.FixedSizeBorderedWorld;
 import de.fjobilabs.gameoflife.model.worlds.FixedSizeTorusWorld;
 import de.fjobilabs.libgdx.util.LoggerFactory;
 
@@ -52,30 +49,15 @@ public class GameScreen extends ScreenAdapter {
         this.screenManager = screenManager;
         
         // Test code:
-//        World world = new FixedSizeBorderedWorld(10, 10);
-        World world = new FixedSizeTorusWorld(50, 50);
+        // World world = new FixedSizeBorderedWorld(10, 10);
+        World world = new FixedSizeTorusWorld(500, 500);
         
-//        createPopulation(world, 100, 100);
-//        createPopulation(world, 10, 10);
-//        createPopulation(world, 50, 50);
-//        createPopulation(world, 50, 150);
-//        createPopulation(world, 150, 50);
-//        createPopulation(world, 150, 150);
+        // RuleSet ruleSet = new GameOfLifeRuleSet("1357/1357", new int[] {1, 3,
+        // 5, 7}, new int[] {1, 3, 5, 7});
+        RuleSet ruleSet = GameOfLifeRuleSet.parse("1357/1357");
+        // RuleSet ruleSet = new StandardGameOfLifeRuleSet();
         
-//        createNicePopulation(world, 60, 60);
-//        createNicePopulation(world, 180, 60);
-//        createNicePopulation(world, 60, 180);
-//        createNicePopulation(world, 180, 180);
-        
-//        createNicePopulation(world, 120, 120);
-        
-//        createNicePopulation(world, 50, 50);
-        
-//        RuleSet ruleSet = new GameOfLifeRuleSet("1357/1357", new int[] {1, 3, 5, 7}, new int[] {1, 3, 5, 7});
-//        RuleSet ruleSet = GameOfLifeRuleSet.parse("1357/1357");
-        RuleSet ruleSet = new StandardGameOfLifeRuleSet();
-        this.simulation = new Simulation(world, ruleSet);
-        this.simulation.setRunning(false);
+        this.simulation = new CellularAutomatonSimulation(world, ruleSet);
         
         this.worldRenderer = new WorldRenderer(assetManager, world);
         
@@ -83,48 +65,6 @@ public class GameScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(this.gameController);
         
         this.fpsLogger = new FPSLogger();
-    }
-    
-    private void createNicePopulation(World world, int x, int y) {
-        world.setCellState(x-6, y, Cell.ALIVE);
-        world.setCellState(x-5, y-1, Cell.ALIVE);
-        world.setCellState(x-5, y+1, Cell.ALIVE);
-        world.setCellState(x-4, y-1, Cell.ALIVE);
-        world.setCellState(x-4, y+1, Cell.ALIVE);
-        world.setCellState(x-3, y, Cell.ALIVE);
-        world.setCellState(x-3, y-1, Cell.ALIVE);
-        
-        world.setCellState(x+6, y, Cell.ALIVE);
-        world.setCellState(x+5, y-1, Cell.ALIVE);
-        world.setCellState(x+5, y+1, Cell.ALIVE);
-        world.setCellState(x+4, y-1, Cell.ALIVE);
-        world.setCellState(x+4, y+1, Cell.ALIVE);
-        world.setCellState(x+3, y, Cell.ALIVE);
-        world.setCellState(x+3, y+1, Cell.ALIVE);
-        
-        world.setCellState(x, y+6, Cell.ALIVE);
-        world.setCellState(x-1, y+5, Cell.ALIVE);
-        world.setCellState(x+1, y+5, Cell.ALIVE);
-        world.setCellState(x-1, y+4, Cell.ALIVE);
-        world.setCellState(x+1, y+4, Cell.ALIVE);
-        world.setCellState(x, y+3, Cell.ALIVE);
-        world.setCellState(x-1, y+3, Cell.ALIVE);
-        
-        world.setCellState(x, y-6, Cell.ALIVE);
-        world.setCellState(x-1, y-5, Cell.ALIVE);
-        world.setCellState(x+1, y-5, Cell.ALIVE);
-        world.setCellState(x-1, y-4, Cell.ALIVE);
-        world.setCellState(x+1, y-4, Cell.ALIVE);
-        world.setCellState(x, y-3, Cell.ALIVE);
-        world.setCellState(x+1, y-3, Cell.ALIVE);
-    }
-    
-    private void createPopulation(World world, int x, int y) {
-        world.setCellState(x, y+1, Cell.ALIVE);
-        world.setCellState(x, y, Cell.ALIVE);
-        world.setCellState(x, y-1, Cell.ALIVE);
-        world.setCellState(x-1, y, Cell.ALIVE);
-        world.setCellState(x+1, y+1, Cell.ALIVE);
     }
     
     @Override
