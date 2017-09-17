@@ -17,10 +17,12 @@ public class Simulation {
     
     private World world;
     private RuleSet ruleSet;
+    private int generation;
     
     public Simulation(World world, RuleSet ruleSet) {
         this.world = world;
         this.ruleSet = ruleSet;
+        this.generation = 0;
     }
     
     /**
@@ -44,6 +46,8 @@ public class Simulation {
                 this.world.setCellState(x, y, newCellStatesBuffer[x][y]);
             }
         }
+        
+        this.generation++;
     }
     
     private int calcNewCellState(int x, int y) {
@@ -56,7 +60,7 @@ public class Simulation {
             results[i] = rules[i].apply(cellContext);
         }
         
-        // Calc new state
+        // Calculate new state
         int newState = Rule.NOT_APPLICABLE;
         for (int i = 0; i < results.length; i++) {
             int result = results[i];
@@ -83,5 +87,9 @@ public class Simulation {
     
     public RuleSet getRuleSet() {
         return ruleSet;
+    }
+    
+    public int getGeneration() {
+        return generation;
     }
 }

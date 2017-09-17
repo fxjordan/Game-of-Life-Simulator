@@ -11,7 +11,8 @@ import com.badlogic.gdx.graphics.Texture;
 public class GameOfLifeAssetManager {
     
     public static final String LOADING_IMAGE = "loading.png";
-    public static final String TEST_IMAGE = "badlogic.jpg";
+    public static final String DEAD_CELL = "dead_cell_2.png";
+    public static final String ALIVE_CELL = "alive_cell_1.png";
     
     private final AssetManager assetManager;
     
@@ -42,6 +43,7 @@ public class GameOfLifeAssetManager {
     
     private void loadImages() {
         this.assetManager.load(LOADING_IMAGE, Texture.class);
-        this.assetManager.load(TEST_IMAGE, Texture.class);
+        this.assetManager.load(DEAD_CELL, Texture.class);
+        this.assetManager.load(ALIVE_CELL, Texture.class);
     }
 }
