@@ -59,6 +59,11 @@ public class FixedSizeBorderedWorld implements World {
         return new CellContext(this.cells[x][y], getNeighbourCellStates(x, y));
     }
     
+    @Override
+    public void freeCellContext(CellContext cellContext) {
+        // TODO Implement
+    }
+    
     private int[] getNeighbourCellStates(int x, int y) {
         int[] neighbours = new int[CellContext.NUM_NEIGHBOUR_CELLS];
         neighbours[0] = this.cells[x - 1][y + 1];

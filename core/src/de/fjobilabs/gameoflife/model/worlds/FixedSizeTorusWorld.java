@@ -2,6 +2,7 @@ package de.fjobilabs.gameoflife.model.worlds;
 
 import de.fjobilabs.gameoflife.model.Cell;
 import de.fjobilabs.gameoflife.model.CellContext;
+import de.fjobilabs.gameoflife.model.CellContextPool;
 import de.fjobilabs.gameoflife.model.World;
 
 /**
@@ -17,11 +18,13 @@ public class FixedSizeTorusWorld implements World {
     private int width;
     private int height;
     private int[][] cells;
+    private CellContextPool cellContextPool;
     
     public FixedSizeTorusWorld(int width, int height) {
         this.width = width;
         this.height = height;
         this.cells = new int[width][height];
+        this.cellContextPool = new CellContextPool();
     }
     
     @Override
@@ -47,7 +50,17 @@ public class FixedSizeTorusWorld implements World {
     @Override
     public CellContext getCellContext(int x, int y) {
         validateCellPosition(x, y);
-        return new CellContext(this.cells[x][y], getNeighbourCellStates(x, y));
+        // return new CellContext(this.cells[x][y], getNeighbourCellStates(x,
+        // y));
+        CellContext cellContext = this.cellContextPool.obtain();
+        cellContext.setCellState(this.cells[x][y]);
+        setNeighbourCellStates(cellContext, x, y);
+        return cellContext;
+    }
+    
+    @Override
+    public void freeCellContext(CellContext cellContext) {
+        this.cellContextPool.free(cellContext);
     }
     
     @Override
@@ -68,8 +81,32 @@ public class FixedSizeTorusWorld implements World {
         return x >= 0 && x < this.width && y >= 0 && y < this.height;
     }
     
-    private int[] getNeighbourCellStates(int x, int y) {
-        int[] neighbours = new int[CellContext.NUM_NEIGHBOUR_CELLS];
+    private void setNeighbourCellStates(CellContext cellContext, int x, int y) {
+        int[] neighbours = cellContext.getNeighbourCellStates();
+        int leftX;
+        int rightX;
+        int bottomY;
+        int topY;
+        leftX = x == 0 ? this.width - 1 : x - 1;
+        rightX = x == this.width - 1 ? 0 : x + 1;
+        bottomY = y == 0 ? this.height - 1 : y - 1;
+        topY = y == this.height - 1 ? 0 : y + 1;
+        
+        neighbours[0] = this.cells[leftX][topY];
+        neighbours[1] = this.cells[x][topY];
+        neighbours[2] = this.cells[rightX][topY];
+        neighbours[3] = this.cells[rightX][y];
+        neighbours[4] = this.cells[rightX][bottomY];
+        neighbours[5] = this.cells[x][bottomY];
+        neighbours[6] = this.cells[leftX][bottomY];
+        neighbours[7] = this.cells[leftX][y];
+        
+        // We need to set this to update the aliveNeighbours field
+        cellContext.setNeighbourCellStates(neighbours);
+    }
+    
+    private int[] getNeighbourCellStates(CellContext cellContext, int x, int y) {
+        int[] neighbours = cellContext.getNeighbourCellStates();
         int leftX;
         int rightX;
         int bottomY;

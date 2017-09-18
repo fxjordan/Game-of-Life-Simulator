@@ -30,10 +30,18 @@ public class CellularAutomatonSimulation extends AbstractSimulation {
             Logger.DEBUG);
     
     private final RuleSet ruleSet;
+    private int[][] newCellStatesBuffer;
+    private int[] ruleResultsBuffer;
     
     public CellularAutomatonSimulation(World world, RuleSet ruleSet) {
         super(world);
         this.ruleSet = ruleSet;
+        /*
+         * TODO Implement as own class, so that buffer can grow (Necessary for
+         * dynamic size worlds)
+         */
+        this.newCellStatesBuffer = new int[world.getWidth()][world.getHeight()];
+        this.ruleResultsBuffer = new int[ruleSet.getRules().length];
     }
     
     /**
@@ -43,7 +51,6 @@ public class CellularAutomatonSimulation extends AbstractSimulation {
     protected void doUpdate() {
         int worldWidth = this.world.getWidth();
         int worldHeight = this.world.getHeight();
-        int[][] newCellStatesBuffer = new int[worldWidth][worldHeight];
         
         long startTime = System.currentTimeMillis();
         // Calculate new states
@@ -68,10 +75,13 @@ public class CellularAutomatonSimulation extends AbstractSimulation {
         Rule[] rules = this.ruleSet.getRules();
         
         // Apply all rules
-        int[] results = new int[rules.length];
+        int[] results = this.ruleResultsBuffer;
         for (int i = 0; i < rules.length; i++) {
             results[i] = rules[i].apply(cellContext);
         }
+        
+        // Free the object to allow pooling
+        this.world.freeCellContext(cellContext);
         
         // Calculate new state
         int newState = Rule.NOT_APPLICABLE;

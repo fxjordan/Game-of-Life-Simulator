@@ -2,6 +2,8 @@ package de.fjobilabs.gameoflife.model;
 
 import java.util.Arrays;
 
+import com.badlogic.gdx.utils.Pool.Poolable;
+
 /**
  * Represents the context of a single cell, holding the states of all 8
  * neighbour cells.<br>
@@ -31,13 +33,13 @@ import java.util.Arrays;
  * @version 1.0
  * @since 16.09.2017 - 15:33:17
  */
-public class CellContext {
+public class CellContext implements Poolable {
     
     public static final int NUM_NEIGHBOUR_CELLS = 8;
     
-    private final int cellState;
-    private final int[] neighbourCellStates;
-    private final int aliveCells;
+    private int cellState;
+    private int[] neighbourCellStates;
+    private int aliveCells;
     
     public CellContext(int cellState, int[] neighbourCellStates) {
         Cell.validateCellState(cellState);
@@ -54,6 +56,10 @@ public class CellContext {
         this.aliveCells = calcAliveCells(neighbourCellStates);
     }
     
+    CellContext() {
+        this.neighbourCellStates = new int[NUM_NEIGHBOUR_CELLS];
+    }
+    
     /**
      * Returns the state of the cell for which this context holds information.
      * 
@@ -61,6 +67,10 @@ public class CellContext {
      */
     public int getCellState() {
         return cellState;
+    }
+    
+    public void setCellState(int cellState) {
+        this.cellState = cellState;
     }
     
     /**
@@ -71,6 +81,13 @@ public class CellContext {
      */
     public int[] getNeighbourCellStates() {
         return neighbourCellStates;
+    }
+    
+    public void setNeighbourCellStates(int[] neighbourCellStates) {
+        // We do the validation of the cell states in the next calculation
+        this.neighbourCellStates = neighbourCellStates;
+        this.aliveCells = calcAliveCells(neighbourCellStates);
+        
     }
     
     /**
@@ -116,5 +133,11 @@ public class CellContext {
             alive += state;
         }
         return alive;
+    }
+    
+    @Override
+    public void reset() {
+        this.aliveCells = 0;
+        this.cellState = 0;
     }
 }

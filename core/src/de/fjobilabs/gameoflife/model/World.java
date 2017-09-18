@@ -16,6 +16,13 @@ public interface World {
     
     public CellContext getCellContext(int x, int y);
     
+    /**
+     * Gives the cell context back to the world, so that the object can be pooled.
+     * 
+     * @param cellContext
+     */
+    public void freeCellContext(CellContext cellContext);
+    
     public int getCellState(int x, int y);
     
     public void setCellState(int x, int y, int state);
