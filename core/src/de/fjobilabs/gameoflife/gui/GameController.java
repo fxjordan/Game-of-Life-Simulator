@@ -31,17 +31,21 @@ public class GameController extends InputAdapter {
     }
     
     public void update(float delta) {
+        float moveSpeed = MOVE_SPEED;
+        if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)) {
+            moveSpeed *= 20;
+        }
         if (Gdx.input.isKeyPressed(Keys.LEFT)) {
-            this.worldRenderer.setCameraX(this.worldRenderer.getCameraX() - MOVE_SPEED * delta);
+            this.worldRenderer.setCameraX(this.worldRenderer.getCameraX() - moveSpeed * delta);
         }
         if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
-            this.worldRenderer.setCameraX(this.worldRenderer.getCameraX() + MOVE_SPEED * delta);
+            this.worldRenderer.setCameraX(this.worldRenderer.getCameraX() + moveSpeed * delta);
         }
         if (Gdx.input.isKeyPressed(Keys.DOWN)) {
-            this.worldRenderer.setCameraY(this.worldRenderer.getCameraY() - MOVE_SPEED * delta);
+            this.worldRenderer.setCameraY(this.worldRenderer.getCameraY() - moveSpeed * delta);
         }
         if (Gdx.input.isKeyPressed(Keys.UP)) {
-            this.worldRenderer.setCameraY(this.worldRenderer.getCameraY() + MOVE_SPEED * delta);
+            this.worldRenderer.setCameraY(this.worldRenderer.getCameraY() + moveSpeed * delta);
         }
     }
     
@@ -77,17 +81,27 @@ public class GameController extends InputAdapter {
         }
         if (keycode == Keys.S) {
             this.simulation.setRunning(true);
-            for (int i = 0; i < 200; i++) {
+            for (int i = 0; i < 10; i++) {
                 this.simulation.update();
             }
             this.simulation.setRunning(false);
+            return true;
+        }
+        if (keycode == Keys.R) {
+            // Enables or diables rendering
+            this.worldRenderer.setEnabled(!this.worldRenderer.isEnabled());
+            return true;
         }
         return false;
     }
     
     @Override
     public boolean scrolled(int amount) {
-        this.worldRenderer.setZoom(this.worldRenderer.getZoom() + amount * ZOOM_SPEED);
+        float zoomSpeed = ZOOM_SPEED;
+        if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)) {
+            zoomSpeed *= 20;
+        }
+        this.worldRenderer.setZoom(this.worldRenderer.getZoom() + amount * zoomSpeed);
         return true;
     }
 }

@@ -26,6 +26,7 @@ public class WorldRenderer {
     private OrthographicCamera camera;
     private FillViewport viewport;
     private CellRenderer cellRenderer;
+    private boolean enabled;
     
     public WorldRenderer(GameOfLifeAssetManager assetManager, World world) {
         this.world = world;
@@ -33,8 +34,9 @@ public class WorldRenderer {
         this.camera.position.x = this.world.getCenterX();
         this.camera.position.y = this.world.getCenterY();
         this.viewport = new FillViewport(50, 50, this.camera);
-//        this.cellRenderer = new TextureCellRenderer(assetManager);
+        // this.cellRenderer = new TextureCellRenderer(assetManager);
         this.cellRenderer = new ShapeCellRenderer();
+        this.enabled = true;
     }
     
     public void resize(int width, int height) {
@@ -42,6 +44,10 @@ public class WorldRenderer {
     }
     
     public void render() {
+        if (!this.enabled) {
+            return;
+        }
+        
         this.viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         
         this.cellRenderer.begin(this.camera);
@@ -88,6 +94,14 @@ public class WorldRenderer {
         } else if (zoom <= DISABLE_BORDER_ZOOM && !this.cellRenderer.isBorderEnabled()) {
             this.cellRenderer.setBorderEnabled(true);
         }
+    }
+    
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
     
     public float getZoom() {
