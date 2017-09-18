@@ -10,16 +10,24 @@ import java.util.Map;
 
 import com.badlogic.gdx.utils.Logger;
 
+import de.fjobilabs.gameoflife.model.Cell;
+import de.fjobilabs.gameoflife.model.simulation.ca.RLEPattern.Token;
+import de.fjobilabs.gameoflife.model.simulation.ca.rules.GameOfLifeRuleSet;
 import de.fjobilabs.libgdx.util.LoggerFactory;
 
 /**
  * Parser for the RLE pattern format.<br>
  * <br>
- * Format described at <a href="http://www.conwaylife.com/wiki/RLE">http://www.conwaylife.com/wiki/RLE</a>.
+ * Format described at <a href=
+ * "http://www.conwaylife.com/wiki/RLE">http://www.conwaylife.com/wiki/RLE</a>.
  * 
  * @author Felix Jordan
  * @version 1.0
  * @since 17.09.2017 - 23:42:04
+ */
+/*
+ * TODO Create new implementation of this parser, that uses token streaming.
+ * Implement similar to JsonParser from Jackson XML/JSON library.
  */
 public class RLEParser {
     
@@ -32,16 +40,45 @@ public class RLEParser {
     private static final Logger logger = LoggerFactory.getLogger(RLEParser.class, Logger.DEBUG);
     
     private InputStream data;
+    private boolean patternHeaderParsed;
     private boolean parsingCellStates;
+    private boolean parsingCellStatesFinished;
+    private int currentTokenRow;
     
-    // Parsed data
+    // Meta headers
     private List<String> comments;
     private String author;
     private Map<String, String> unknownMetaHeaders;
     
+    // Pattern header
+    private int patternWidth;
+    private int patternHeight;
+    private String patternRule;
+    
+    // Pattern
+    @SuppressWarnings("rawtypes")
+    private List[] patternTokens;
+    
     public RLEParser(InputStream data) {
         this.data = data;
         this.comments = new ArrayList<>();
+    }
+    
+    /*
+     * TODO BAD CODE
+     */
+    @SuppressWarnings("unchecked")
+    public RLEPattern createPattern() {
+        Token[][] tokens = new Token[this.patternHeight][];
+        for (int i=0; i<this.patternHeight; i++) {
+            @SuppressWarnings("rawtypes")
+            List tokenRowList = this.patternTokens[i];
+            Token[] tokenRow = new Token[tokenRowList.size()];
+            tokens[i] = (Token[]) tokenRowList.toArray(tokenRow);
+        }
+        RLEPattern pattern = new RLEPattern(this.patternWidth, this.patternHeight, tokens);
+        // TODO set meta headers of pattern
+        return pattern;
     }
     
     public void parse() throws IOException {
@@ -57,18 +94,170 @@ public class RLEParser {
                 parseMetaHeader(line);
             } else if (firstChar == PATTERN_HEADER_START) {
                 parsePatternHeader(line);
-            } else {
-                // TODO Check if parsing cell states
-                // TODO If not: Check if header was parsed
-                // TODO Error if header was not parsed
-                // TODO STart parsing if begin of cell states
-                // TODO Check end of cell states
+            } else if (!this.patternHeaderParsed) {
+                throw new RLEParserException("Invalid format: No pattern header before pattern!");
+            } else if (this.parsingCellStates) {
+                parseCellStates(line);
+            } else if (!this.parsingCellStatesFinished) {
+                this.parsingCellStates = true;
+                parseCellStates(line);
             }
+            /*
+             * If parsingCellStatesFinished is true we silently ignore all other
+             * lines, that are no meta headers.
+             */
         }
     }
     
+    @SuppressWarnings("unchecked")
+    private void parseCellStates(String line) {
+        int index = 0;
+        int runCount = -1;
+        while (index < line.length()) {
+            char character = line.charAt(index);
+            if (Character.isDigit(character)) {
+                if (runCount == -1) {
+                    runCount = parseRunCount(line, index);
+                }
+                // We skip every digit from the current run count
+            } else if(character == '$') {
+                this.currentTokenRow++;
+            } else if (character == '!') {
+                this.parsingCellStates = false;
+                this.parsingCellStatesFinished = true;
+                // We ignore the rest of the line
+                return;
+            }
+            else if (character == 'o') {
+                // Alive cell
+                Token token;
+                if (runCount != -1) {
+                    token = new Token(runCount, Cell.ALIVE);
+                    runCount = -1;
+                } else {
+                    token = new Token(Cell.ALIVE);
+                }
+                this.patternTokens[this.currentTokenRow].add(token);
+            } else if (character == 'b') {
+                // Dead cell
+                Token token;
+                if (runCount != -1) {
+                    token = new Token(runCount, Cell.DEAD);
+                    runCount = -1;
+                } else {
+                    token = new Token(Cell.DEAD);
+                }
+                this.patternTokens[this.currentTokenRow].add(token);
+            } else {
+                // All other unknown characters are treated as dead cells
+                logger.info("WARN: Unknown cell state: " + character + ". Treating as dead cell!");
+                Token token;
+                if (runCount != -1) {
+                    token = new Token(runCount, Cell.DEAD);
+                    runCount = -1;
+                } else {
+                    token = new Token(Cell.DEAD);
+                }
+                this.patternTokens[this.currentTokenRow].add(token);
+            }
+            index++;
+        }
+    }
+    
+    private int parseRunCount(String line, int index) {
+        for (int i=index; i<line.length(); i++) {
+            if (!Character.isDigit(line.charAt(i))) {
+                return Integer.parseInt(line.substring(index, i));
+            }
+        }
+        throw new RLEParserException("Failed to parse run count");
+    }
+    
+    /*
+     * TODO Refactor header parsing code.
+     */
     private void parsePatternHeader(String header) {
-        // TODO Parse pattern header
+        String[] elements = header.split(",");
+        if (elements.length < 2) {
+            throw new RLEParserException("Invalid pattern header: " + header);
+        }
+        // Parse width element
+        parsePatternWidthHeaderElement(elements[0].trim());
+        parsePatternHeighthHeaderElement(elements[1].trim());
+        
+        this.patternTokens = new List[this.patternHeight];
+        for (int i=0; i<this.patternTokens.length; i++) {
+            this.patternTokens[i] = new ArrayList<>();
+        }
+        
+        if (elements.length == 3) {
+            parsePatternRuleHeaderElement(elements[2].trim());
+        } else if (elements.length > 3) {
+            throw new RLEParserException("Invalid pattern header: " + header);
+        }
+        this.patternHeaderParsed = true;
+    }
+    
+    /*
+     * TODO Refactor header parsing code.
+     */
+    private void parsePatternWidthHeaderElement(String element) {
+        if (element.length() < 3 || !element.startsWith("x")) {
+            throw new RLEParserException("Invalid pattern width header element: " + element);
+        }
+        String value = parsePatternHeaderElementValue(element);
+        int width;
+        try {
+            width = Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new RLEParserException("Invalid pattern width: " + value);
+        }
+        if (width <= 0) {
+            throw new RLEParserException("Invalid pattern width: " + value);
+        }
+        this.patternWidth = width;
+    }
+    
+    /*
+     * TODO Refactor header parsing code.
+     */
+    private void parsePatternHeighthHeaderElement(String element) {
+        if (element.length() < 3 || !element.startsWith("y")) {
+            throw new RLEParserException("Invalid pattern height header element: " + element);
+        }
+        String value = parsePatternHeaderElementValue(element);
+        int height;
+        try {
+            height = Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new RLEParserException("Invalid pattern height: " + value);
+        }
+        if (height <= 0) {
+            throw new RLEParserException("Invalid pattern height: " + value);
+        }
+        this.patternHeight = height;
+    }
+    
+    /*
+     * TODO Refactor header parsing code.
+     */
+    private void parsePatternRuleHeaderElement(String element) {
+        if (element.length() < 3 || !element.startsWith("rule")) {
+            throw new RLEParserException("Invalid pattern rule header element: " + element);
+        }
+        // TODO Should we validate this here?
+        this.patternRule = parsePatternHeaderElementValue(element);
+    }
+    
+    /*
+     * TODO Refactor header parsing code.
+     */
+    private String parsePatternHeaderElementValue(String element) {
+        int equalsSignIndex = element.indexOf('=');
+        if (equalsSignIndex == -1) {
+            throw new RLEParserException("Invalid pattern header element: " + element);
+        }
+        return element.substring(equalsSignIndex + 1).trim();
     }
     
     private void parseMetaHeader(String header) {

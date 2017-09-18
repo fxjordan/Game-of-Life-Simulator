@@ -31,16 +31,16 @@ public class GameController extends InputAdapter {
     }
     
     public void update(float delta) {
-        if(Gdx.input.isKeyPressed(Keys.LEFT)) {
+        if (Gdx.input.isKeyPressed(Keys.LEFT)) {
             this.worldRenderer.setCameraX(this.worldRenderer.getCameraX() - MOVE_SPEED * delta);
         }
-        if(Gdx.input.isKeyPressed(Keys.RIGHT)) {
+        if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
             this.worldRenderer.setCameraX(this.worldRenderer.getCameraX() + MOVE_SPEED * delta);
         }
-        if(Gdx.input.isKeyPressed(Keys.DOWN)) {
+        if (Gdx.input.isKeyPressed(Keys.DOWN)) {
             this.worldRenderer.setCameraY(this.worldRenderer.getCameraY() - MOVE_SPEED * delta);
         }
-        if(Gdx.input.isKeyPressed(Keys.UP)) {
+        if (Gdx.input.isKeyPressed(Keys.UP)) {
             this.worldRenderer.setCameraY(this.worldRenderer.getCameraY() + MOVE_SPEED * delta);
         }
     }
@@ -74,6 +74,13 @@ public class GameController extends InputAdapter {
         if (keycode == Keys.SPACE) {
             this.simulation.setRunning(!this.simulation.isRunning());
             return true;
+        }
+        if (keycode == Keys.S) {
+            this.simulation.setRunning(true);
+            for (int i = 0; i < 200; i++) {
+                this.simulation.update();
+            }
+            this.simulation.setRunning(false);
         }
         return false;
     }
