@@ -102,6 +102,7 @@ public class WorldRenderer {
     
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+        logger.info("Rendering " + (this.enabled ? "enabled" : "disabled"));
     }
     
     public float getZoom() {

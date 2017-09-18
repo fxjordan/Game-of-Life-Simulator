@@ -5,10 +5,12 @@ import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Logger;
 
 import de.fjobilabs.gameoflife.model.Cell;
 import de.fjobilabs.gameoflife.model.Simulation;
 import de.fjobilabs.gameoflife.model.World;
+import de.fjobilabs.libgdx.util.LoggerFactory;
 
 /**
  * @author Felix Jordan
@@ -17,12 +19,15 @@ import de.fjobilabs.gameoflife.model.World;
  */
 public class GameController extends InputAdapter {
     
+    private static final Logger logger = LoggerFactory.getLogger(GameController.class);
+    
     private static final float ZOOM_SPEED = 0.5f;
     private static final float MOVE_SPEED = 10.0f;
     
     private Simulation simulation;
     private WorldRenderer worldRenderer;
     private Vector2 touchPoint;
+    private boolean editMode;
     
     public GameController(Simulation simulation, WorldRenderer worldRenderer) {
         this.simulation = simulation;
@@ -51,13 +56,15 @@ public class GameController extends InputAdapter {
     
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (button == Buttons.LEFT) {
+        if (button == Buttons.LEFT && this.editMode) {
             setCellState(screenX, screenY, Cell.ALIVE);
+            return true;
         }
-        if (button == Buttons.RIGHT) {
+        if (button == Buttons.RIGHT && this.editMode) {
             setCellState(screenX, screenY, Cell.DEAD);
+            return true;
         }
-        return super.touchDown(screenX, screenY, pointer, button);
+        return false;
     }
     
     private boolean setCellState(int screenX, int screenY, int state) {
@@ -91,6 +98,11 @@ public class GameController extends InputAdapter {
             // Enables or diables rendering
             this.worldRenderer.setEnabled(!this.worldRenderer.isEnabled());
             return true;
+        }
+        if (keycode == Keys.E) {
+            // Enables or disables edit mode
+            this.editMode = !this.editMode;
+            logger.info("Edit mode " + (this.editMode ? "enabled" : "disabled"));
         }
         return false;
     }
