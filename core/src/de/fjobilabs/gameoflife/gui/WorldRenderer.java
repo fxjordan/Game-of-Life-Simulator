@@ -34,8 +34,8 @@ public class WorldRenderer {
         this.camera.position.x = this.world.getCenterX();
         this.camera.position.y = this.world.getCenterY();
         this.viewport = new FillViewport(50, 50, this.camera);
-        // this.cellRenderer = new TextureCellRenderer(assetManager);
-        this.cellRenderer = new ShapeCellRenderer();
+         this.cellRenderer = new TextureCellRenderer(assetManager);
+//        this.cellRenderer = new ShapeCellRenderer();
         this.enabled = true;
     }
     

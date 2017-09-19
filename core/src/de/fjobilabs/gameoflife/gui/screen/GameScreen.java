@@ -35,7 +35,7 @@ public class GameScreen extends ScreenAdapter {
     private static final float SCENE_WIDTH = 800;
     private static final float SCENE_HEIGHT = 480;
     
-    private static final int TICKS_PER_SECOND = 1;
+    private static final int TICKS_PER_SECOND = 10;
     private static final float TICK = 1.0f / (float) TICKS_PER_SECOND;
     private static final float MAX_UPDATES_PER_FRAME = 1;
     
@@ -58,7 +58,7 @@ public class GameScreen extends ScreenAdapter {
         // Test code:
         // World world = new FixedSizeBorderedWorld(10, 10);
         
-        World world = new FixedSizeTorusWorld(2000, 2000);
+        World world = new FixedSizeTorusWorld(1800, 1700);
         
 //        Pattern pattern = new ArrayPattern(3, 3,
 //                new int[][] {
@@ -68,7 +68,7 @@ public class GameScreen extends ScreenAdapter {
 //        
 //        pattern.apply(world, 250, 250);
         
-        RLEParser parser = new RLEParser(Gdx.files.internal("turingmachine.rle").read());
+        RLEParser parser = new RLEParser(Gdx.files.internal("patterns/turingmachine.rle").read());
         try {
             parser.parse();
         } catch (IOException e) {
