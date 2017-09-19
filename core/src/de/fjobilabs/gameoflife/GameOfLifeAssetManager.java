@@ -17,6 +17,8 @@ public class GameOfLifeAssetManager {
     public static final String ALIVE_CELL = "alive_cell_simple_border_small_2.png";
     public static final String DEAD_CELL_NO_BORDER = "dead_cell_simple.png";
     public static final String ALIVE_CELL_NO_BORDER = "alive_cell_simple_2.png";
+//    public static final String DEAD_CELL_NO_BORDER = "dead_cell_simple.png";
+//    public static final String ALIVE_CELL_NO_BORDER = "alive_cell_simple.png";
     
     private final AssetManager assetManager;
     

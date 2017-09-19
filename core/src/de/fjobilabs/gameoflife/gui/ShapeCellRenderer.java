@@ -43,6 +43,7 @@ public class ShapeCellRenderer implements CellRenderer {
     public void begin(Camera camera) {
         this.shapeRenderer.setProjectionMatrix(camera.combined);
         this.shapeRenderer.begin(ShapeType.Filled);
+//        this.shapeRenderer.setColor(Color.RED);
     }
     
     @Override
