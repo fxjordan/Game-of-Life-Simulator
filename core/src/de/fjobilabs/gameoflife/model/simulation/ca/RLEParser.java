@@ -121,7 +121,12 @@ public class RLEParser {
                 }
                 // We skip every digit from the current run count
             } else if(character == '$') {
-                this.currentTokenRow++;
+                if (runCount !=-1) {
+                    this.currentTokenRow += runCount;
+                    runCount = -1;
+                } else {
+                    this.currentTokenRow++;
+                }
             } else if (character == '!') {
                 this.parsingCellStates = false;
                 this.parsingCellStatesFinished = true;
