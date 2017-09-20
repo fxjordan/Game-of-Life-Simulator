@@ -1,16 +1,11 @@
 package de.fjobilabs.gameoflife;
 
-import java.nio.IntBuffer;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
@@ -18,7 +13,6 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.VertexBufferObject;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
@@ -80,31 +74,31 @@ public class RenderingTestGame extends Game {
         this.shaderProgramm = new ShaderProgram(this.vertexShader, this.fragmentShader);
         
         // Create geometry shader
-        String geometryShaderSource = Gdx.files.internal("shaders/geometryShader.glsl").readString();
-        int geometryShader = Gdx.gl.glCreateShader(GL32.GL_GEOMETRY_SHADER);
-        System.out.println("geometry shader id: " + geometryShader);
-        if (geometryShader == 0) {
-            throw new RuntimeException("Failed to create geometry shader");
-        }
-        Gdx.gl.glShaderSource(geometryShader, geometryShaderSource);
-        Gdx.gl.glCompileShader(geometryShader);
-        
-        IntBuffer intBuf = BufferUtils.newIntBuffer(1);
-        Gdx.gl.glGetShaderiv(geometryShader, GL20.GL_COMPILE_STATUS, intBuf);
-        int compiled = intBuf.get(0);
-        System.out.println("geometry shader compile status: " + compiled);
-        if (compiled == 0) {
-            Gdx.gl.glGetShaderiv(geometryShader, GL20.GL_INFO_LOG_LENGTH, intBuf);
-            int logLength = intBuf.get(0);
-            System.out.println("info_log_length=" + logLength);
-            
-            String log = Gdx.gl.glGetShaderInfoLog(geometryShader);
-            System.out.println("SHADER_INFO_LOG_START=====");
-            System.out.println(log);
-            System.out.println("SHADER_INFO_LOG_END========");
-            
-            throw new RuntimeException("Geometry shader compillation failed");
-        }
+//        String geometryShaderSource = Gdx.files.internal("shaders/geometryShader.glsl").readString();
+//        int geometryShader = Gdx.gl.glCreateShader(GL32.GL_GEOMETRY_SHADER);
+//        System.out.println("geometry shader id: " + geometryShader);
+//        if (geometryShader == 0) {
+//            throw new RuntimeException("Failed to create geometry shader");
+//        }
+//        Gdx.gl.glShaderSource(geometryShader, geometryShaderSource);
+//        Gdx.gl.glCompileShader(geometryShader);
+//        
+//        IntBuffer intBuf = BufferUtils.newIntBuffer(1);
+//        Gdx.gl.glGetShaderiv(geometryShader, GL20.GL_COMPILE_STATUS, intBuf);
+//        int compiled = intBuf.get(0);
+//        System.out.println("geometry shader compile status: " + compiled);
+//        if (compiled == 0) {
+//            Gdx.gl.glGetShaderiv(geometryShader, GL20.GL_INFO_LOG_LENGTH, intBuf);
+//            int logLength = intBuf.get(0);
+//            System.out.println("info_log_length=" + logLength);
+//            
+//            String log = Gdx.gl.glGetShaderInfoLog(geometryShader);
+//            System.out.println("SHADER_INFO_LOG_START=====");
+//            System.out.println(log);
+//            System.out.println("SHADER_INFO_LOG_END========");
+//            
+//            throw new RuntimeException("Geometry shader compillation failed");
+//        }
         
         
         this.u_projViewTrans = this.shaderProgramm.getUniformLocation("u_projViewTrans");

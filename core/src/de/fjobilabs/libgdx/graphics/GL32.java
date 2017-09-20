@@ -1,8 +1,10 @@
-package de.fjobilabs.gameoflife;
+package de.fjobilabs.libgdx.graphics;
 
 /**
- * Desktop OpenGL specific constants and functions from OpenGL 3. Necessary to
- * use geometry shader, which is not available in OpenGL ES.
+ * Desktop OpenGL specific constants and functions from OpenGL 3.2. Necessary to
+ * use geometry shader, which is not available in OpenGL ES.<br>
+ * <br>
+ * <b>Warning:</b> This can only be used with desktop backend!
  * 
  * @author Felix Jordan
  * @version 1.0
