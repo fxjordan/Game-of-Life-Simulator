@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import de.fjobilabs.libgdx.graphics.ExtendedShaderProgram;
+
 /**
  * @author Felix Jordan
  * @version 1.0
@@ -40,6 +42,11 @@ public class GeometryShaderRenderingTest extends Game {
         this.viewport = new FitViewport(width, height, this.camera);
         
         this.box = new GeometryShaderProgram();
+        
+        ExtendedShaderProgram shaderProgram = new ExtendedShaderProgram(
+                Gdx.files.internal("shaders/geometry-shader-test/vertexShader.glsl"),
+                Gdx.files.internal("shaders/geometry-shader-test/fragmentShader.glsl"),
+                Gdx.files.internal("shaders/geometry-shader-test/geometryShader.glsl"));
         
         this.u_projViewTrans = this.box.getUniformLocation("u_projViewTrans");
         this.u_worldTrans = this.box.getUniformLocation("u_worldTrans");

@@ -1,9 +1,14 @@
 package de.fjobilabs.libgdx.graphics;
 
+import java.lang.reflect.Field;
+
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.VertexBufferObject;
+import com.badlogic.gdx.utils.reflect.Method;
 
 /**
  * An {@code ExtendedShaderProgram} encapsulates a vertex, fragment and geometry
@@ -29,7 +34,8 @@ import com.badlogic.gdx.graphics.glutils.VertexBufferObject;
  * reason it's necessary, because the creation, loading and linking of the
  * program is done in the constructor of {@code ShaderProgram} which has to be
  * called before the constructor of this class. So there is no other way to
- * solve this without using bytecode modification, which would make the code even worse.
+ * solve this without using bytecode modification, which would make the code
+ * even worse.
  * 
  * @author Felix Jordan
  * @version 1.0
@@ -37,15 +43,34 @@ import com.badlogic.gdx.graphics.glutils.VertexBufferObject;
  */
 public class ExtendedShaderProgram extends ShaderProgram {
     
+    private ShaderProgrammAccessor shaderProgrammAccessor;
+    private String geometryShaderSource;
+    private int geometryShaderHandle;
+    
     public ExtendedShaderProgram(String vertexShader, String fragmentShader, String geometryShader) {
         super(vertexShader, fragmentShader);
+        this.shaderProgrammAccessor = new ShaderProgrammAccessor(this);
+        
         if (geometryShader == null) {
             throw new IllegalArgumentException("Geometry shader must not be null");
         }
+        
+        this.geometryShaderSource = geometryShader;
+        
+        compileShaders(geometryShader);
+        
         // TODO Add geometry shader to existing shader program
         // See parent constructor for reference
         // 1. Load and compile geometry shader
+        
         // 2. Access underlying shader program though reflection.
+        int program = this.shaderProgrammAccessor.getProgramm();
+        if (program == -1) {
+            createProgram();
+        } else {
+            detachShaders(program);
+        }
+        
         // 3. Attach geometry shader to existing program
         // 4. Link shader program (+check status and validate)
         // [5. Fetch attributes again (reflection)] (first test vertex
@@ -57,4 +82,41 @@ public class ExtendedShaderProgram extends ShaderProgram {
             FileHandle geometryShader) {
         this(vertexShader.readString(), fragmentShader.readString(), geometryShader.readString());
     }
+    
+    private void compileShaders(String geometryShader) {
+        int vertexShaderHandle = this.shaderProgrammAccessor.getVertexShaderHandle();
+        int fragmentShaderHandle = this.shaderProgrammAccessor.getFragmentShaderHandle();
+        
+        this.geometryShaderHandle = this.shaderProgrammAccessor.loadShader(GL32.GL_GEOMETRY_SHADER,
+                geometryShader);
+        
+        if (vertexShaderHandle == -1 || fragmentShaderHandle == -1 || this.geometryShaderHandle == -1) {
+            this.shaderProgrammAccessor.setIsCompiled(false);
+            return;
+        }
+        
+        int program = this.shaderProgrammAccessor.getProgramm();
+        if (program == -1) {
+            program = createProgram();
+        } else {
+            detachShaders(program);
+        }
+        
+        // Only attach geometry shader. linkProgram(int) will do the rest.
+        Gdx.gl.glAttachShader(program, this.geometryShaderHandle);
+        program = this.shaderProgrammAccessor.linkProgram(program);
+        if (program == -1) {
+            this.shaderProgrammAccessor.setIsCompiled(false);
+            return;
+        }
+        
+        this.shaderProgrammAccessor.setIsCompiled(true);
+    }
+    
+    private void detachShaders(int program) {
+        GL20 gl = Gdx.gl;
+        gl.glDetachShader(program, this.shaderProgrammAccessor.getVertexShaderHandle());
+        gl.glDetachShader(program, this.shaderProgrammAccessor.getFragmentShaderHandle());
+    }
+    
 }

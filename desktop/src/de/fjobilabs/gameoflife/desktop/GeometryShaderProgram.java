@@ -59,8 +59,8 @@ public class GeometryShaderProgram {
         int linked = intbuf.get(0);
         if (linked == GL20.GL_FALSE) {
             String log = gl.glGetProgramInfoLog(this.program);
-            System.err.println(log);
-            return;
+            System.err.println("link status " + linked + " :" + log);
+//            return;
         }
         
         gl.glValidateProgram(program);
@@ -69,8 +69,8 @@ public class GeometryShaderProgram {
         int valid = intbuf.get(0);
         if (valid == GL20.GL_FALSE) {
             String log = gl.glGetProgramInfoLog(this.program);
-            System.err.println(log);
-            return;
+            System.err.println("validation status " + valid + " :" + log);
+//            return;
         }
         
         fetchUniforms();
