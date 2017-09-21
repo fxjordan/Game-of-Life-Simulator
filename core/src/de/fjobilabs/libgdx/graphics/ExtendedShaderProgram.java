@@ -43,8 +43,19 @@ import com.badlogic.gdx.utils.reflect.Method;
  */
 public class ExtendedShaderProgram extends ShaderProgram {
     
+    /**
+     * Code that is always added to the geometry shader code, typically used to
+     * inject a #version line. Note that this is added as-is, you should include
+     * a newline (`\n`) if needed.
+     */
+    public static String prependGeometryCode = "";
+    
     private ShaderProgrammAccessor shaderProgrammAccessor;
+    
+    /** Geometry shader handle **/
     private String geometryShaderSource;
+    
+    /** Geometry shader source **/
     private int geometryShaderHandle;
     
     public ExtendedShaderProgram(String vertexShader, String fragmentShader, String geometryShader) {
@@ -54,23 +65,21 @@ public class ExtendedShaderProgram extends ShaderProgram {
         if (geometryShader == null) {
             throw new IllegalArgumentException("Geometry shader must not be null");
         }
-        
+        if (prependGeometryCode != null && prependGeometryCode.length() > 0) {
+            geometryShader = prependGeometryCode + geometryShader;
+        }
         this.geometryShaderSource = geometryShader;
         
         compileShaders(geometryShader);
+        if (isCompiled()) {
+            this.shaderProgrammAccessor.fetchAttributes();
+            this.shaderProgrammAccessor.fetchUniforms();
+        }
         
         // TODO Add geometry shader to existing shader program
         // See parent constructor for reference
         // 1. Load and compile geometry shader
-        
         // 2. Access underlying shader program though reflection.
-        int program = this.shaderProgrammAccessor.getProgramm();
-        if (program == -1) {
-            createProgram();
-        } else {
-            detachShaders(program);
-        }
-        
         // 3. Attach geometry shader to existing program
         // 4. Link shader program (+check status and validate)
         // [5. Fetch attributes again (reflection)] (first test vertex
@@ -83,6 +92,13 @@ public class ExtendedShaderProgram extends ShaderProgram {
         this(vertexShader.readString(), fragmentShader.readString(), geometryShader.readString());
     }
     
+    /**
+     * Compiles the geometry shader and uses the already compiled vertex and
+     * fragment shaders from the {@code ShaderProgram} class to create a shader
+     * program.
+     * 
+     * @param geometryShader The geometry shader source.
+     */
     private void compileShaders(String geometryShader) {
         int vertexShaderHandle = this.shaderProgrammAccessor.getVertexShaderHandle();
         int fragmentShaderHandle = this.shaderProgrammAccessor.getFragmentShaderHandle();

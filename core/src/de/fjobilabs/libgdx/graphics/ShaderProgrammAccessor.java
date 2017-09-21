@@ -12,7 +12,13 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
  * @version 1.0
  * @since 21.09.2017 - 12:59:35
  */
-public class ShaderProgrammAccessor {
+/*
+ * TODO Maybe we can use a Proxy class to improve functionality of
+ * ExtendedShaderProgram. This would grant more flexibility and would make it
+ * possible to invoke code before a method of ShaderProgram is executed (aspect
+ * orientated programming).
+ */
+class ShaderProgrammAccessor {
     
     private ShaderProgram shaderProgram;
     
@@ -25,8 +31,10 @@ public class ShaderProgrammAccessor {
     // ShaderProgram methods
     private Method loadShaderMethod;
     private Method linkProgramMethod;
+    private Method fetchAttributesMethod;
+    private Method fetchUniformsMethod;
     
-    public ShaderProgrammAccessor(ShaderProgram shaderProgram) {
+    ShaderProgrammAccessor(ShaderProgram shaderProgram) {
         this.shaderProgram = shaderProgram;
         
         this.programField = accessField("program");
@@ -36,45 +44,39 @@ public class ShaderProgrammAccessor {
         
         this.loadShaderMethod = accessMethod("loadShader", int.class, String.class);
         this.linkProgramMethod = accessMethod("linkProgram", int.class);
+        this.fetchAttributesMethod = accessMethod("fetchAttributes");
+        this.fetchUniformsMethod = accessMethod("fetchUniforms");
     }
     
-    public int loadShader(int type, String source) {
+    int loadShader(int type, String source) {
         return (int) invokeShaderProgramMethod(this.loadShaderMethod, type, source);
     }
     
-    public int linkProgram(int program) {
-//        return (int) invokeShaderProgramMethod(this.linkProgramMethod, program);
-        Method method = this.linkProgramMethod;
-        try {
-            System.out.println("arg: " + program);
-            int parameterCount = method.getParameterCount();
-            System.out.println("parameter count: " + parameterCount);
-            return (int) this.loadShaderMethod.invoke(this.shaderProgram, program);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Cannot access ShaderProgram method '" + method.getName()
-                    + Arrays.toString(method.getParameterTypes()) + "'", e);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Cannot invoke ShaderProgram method '" + method.getName()
-                    + Arrays.toString(method.getParameterTypes()) + "'", e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException("Exception in ShaderProgram method '" + method.getName()
-                    + Arrays.toString(method.getParameterTypes()) + "'", e);
-        }
+    int linkProgram(int program) {
+        return (int) invokeShaderProgramMethod(this.linkProgramMethod, program);
     }
     
-    public int getProgramm() {
+    void fetchAttributes() {
+        invokeShaderProgramMethod(this.fetchAttributesMethod);
+    }
+    
+    void fetchUniforms() {
+        invokeShaderProgramMethod(this.fetchUniformsMethod);
+    }
+    
+    int getProgramm() {
         return getIntFieldValue(this.programField);
     }
     
-    public int getVertexShaderHandle() {
+    int getVertexShaderHandle() {
         return getIntFieldValue(this.vertexShaderHandleField);
     }
     
-    public int getFragmentShaderHandle() {
+    int getFragmentShaderHandle() {
         return getIntFieldValue(this.fragmentShaderHandleField);
     }
     
-    public void setIsCompiled(boolean isCompiled) {
+    void setIsCompiled(boolean isCompiled) {
         setShaderProgramFieldValue(this.isCompiledField, isCompiled);
     }
     
@@ -129,27 +131,9 @@ public class ShaderProgrammAccessor {
         }
     }
     
-    private Object invokeShaderProgramMethod(Method method, Object arg) {
+    private Object invokeShaderProgramMethod(Method method, Object... args) {
         try {
-            System.out.println("arg: " + arg);
-            int parameterCount = method.getParameterCount();
-            System.out.println("parameter count: " + parameterCount);
-            return this.loadShaderMethod.invoke(this.shaderProgram, arg);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Cannot access ShaderProgram method '" + method.getName()
-                    + Arrays.toString(method.getParameterTypes()) + "'", e);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Cannot invoke ShaderProgram method '" + method.getName()
-                    + Arrays.toString(method.getParameterTypes()) + "'", e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException("Exception in ShaderProgram method '" + method.getName()
-                    + Arrays.toString(method.getParameterTypes()) + "'", e);
-        }
-    }
-    
-    private Object invokeShaderProgramMethod(Method method, Object arg0, Object arg1) {
-        try {
-            return this.loadShaderMethod.invoke(this.shaderProgram, arg0, arg1);
+            return method.invoke(this.shaderProgram, args);
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Cannot access ShaderProgram method '" + method.getName()
                     + Arrays.toString(method.getParameterTypes()) + "'", e);
