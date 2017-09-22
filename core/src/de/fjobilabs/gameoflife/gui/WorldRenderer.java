@@ -1,5 +1,6 @@
 package de.fjobilabs.gameoflife.gui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Logger;
@@ -47,8 +48,7 @@ public class WorldRenderer {
             return;
         }
         
-        // We don't need this, since we currently have no GUI viewport!
-//        this.viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        this.viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         
         this.cellRenderer.begin(this.camera);
         

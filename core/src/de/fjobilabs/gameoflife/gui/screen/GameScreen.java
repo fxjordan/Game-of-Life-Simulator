@@ -58,7 +58,7 @@ public class GameScreen extends ScreenAdapter {
         // Test code:
         // World world = new FixedSizeBorderedWorld(10, 10);
         
-        World world = new FixedSizeTorusWorld(1800, 1700);
+        World world = new FixedSizeTorusWorld(1000, 1000);
         
 //        Pattern pattern = new ArrayPattern(3, 3,
 //                new int[][] {
@@ -68,7 +68,7 @@ public class GameScreen extends ScreenAdapter {
 //        
 //        pattern.apply(world, 250, 250);
         
-        RLEParser parser = new RLEParser(Gdx.files.internal("patterns/turingmachine.rle").read());
+        RLEParser parser = new RLEParser(Gdx.files.internal("patterns/puffer1.rle").read());
         try {
             parser.parse();
         } catch (IOException e) {
@@ -88,7 +88,7 @@ public class GameScreen extends ScreenAdapter {
         // this.simulation = new LangtonsAntSimulation(world);
         
         this.worldRenderer = new WorldRenderer(assetManager, world);
-        this.worldRenderer.setZoom(46);
+//        this.worldRenderer.setZoom(46);
         
         this.gameController = new GameController(this.simulation, this.worldRenderer);
         Gdx.input.setInputProcessor(this.gameController);

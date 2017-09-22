@@ -11,22 +11,23 @@ import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.VertexBufferObject;
+import com.badlogic.gdx.graphics.glutils.VertexBufferObjectWithVAO;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
+import de.fjobilabs.libgdx.graphics.ExtendedShaderProgram;
 
 /**
  * @author Felix Jordan
  * @version 1.0
  * @since 19.09.2017 - 19:57:52
  */
-public class RenderingTestGame extends Game {
+public class GeometryShaderTestGame extends Game {
     
     private float[] vertices;
     private VertexBufferObject vertexBufferObject;
-    private String vertexShader;
-    private String fragmentShader;
-    private ShaderProgram shaderProgramm;
+    private ShaderProgram shaderProgram;
     
     private Matrix4 transformationMatrix;
     
@@ -42,8 +43,8 @@ public class RenderingTestGame extends Game {
     public void create() {
         this.transformationMatrix = new Matrix4().idt();
         
-        int width = 2000;
-        int height = 2000;
+        int width = 5000;
+        int height = 5000;
         int numVertices = width * height;
         vertices = new float[numVertices * (3)];
         float x = 0;
@@ -66,55 +67,21 @@ public class RenderingTestGame extends Game {
                 this.vertexAttributes);
         
         this.camera = new OrthographicCamera();
-        this.camera.position.set(width / 2, height / 2, 0);
+        this.camera.position.set(width * 0.5f, height * 0.5f, 0);
         this.camera.update();
         this.viewport = new FitViewport(width, height, this.camera);
         
-        /*
-         * TODO Use new ExtendedShaderProgram to use geometry shader for
-         * rendering.
-         */
-        this.vertexShader = Gdx.files.internal("shaders/vertexShader.glsl").readString();
-        this.fragmentShader = Gdx.files.internal("shaders/fragmentShader.glsl").readString();
-        this.shaderProgramm = new ShaderProgram(this.vertexShader, this.fragmentShader);
+        this.shaderProgram = new ExtendedShaderProgram(Gdx.files.internal("shaders/geometry-shader-test-game/vertexShader.glsl"),
+                Gdx.files.internal("shaders/geometry-shader-test-game/fragmentShader.glsl"),
+                Gdx.files.internal("shaders/geometry-shader-test-game/geometryShader.glsl"));
         
-        // Create geometry shader
-        // String geometryShaderSource =
-        // Gdx.files.internal("shaders/geometryShader.glsl").readString();
-        // int geometryShader = Gdx.gl.glCreateShader(GL32.GL_GEOMETRY_SHADER);
-        // System.out.println("geometry shader id: " + geometryShader);
-        // if (geometryShader == 0) {
-        // throw new RuntimeException("Failed to create geometry shader");
-        // }
-        // Gdx.gl.glShaderSource(geometryShader, geometryShaderSource);
-        // Gdx.gl.glCompileShader(geometryShader);
-        //
-        // IntBuffer intBuf = BufferUtils.newIntBuffer(1);
-        // Gdx.gl.glGetShaderiv(geometryShader, GL20.GL_COMPILE_STATUS, intBuf);
-        // int compiled = intBuf.get(0);
-        // System.out.println("geometry shader compile status: " + compiled);
-        // if (compiled == 0) {
-        // Gdx.gl.glGetShaderiv(geometryShader, GL20.GL_INFO_LOG_LENGTH,
-        // intBuf);
-        // int logLength = intBuf.get(0);
-        // System.out.println("info_log_length=" + logLength);
-        //
-        // String log = Gdx.gl.glGetShaderInfoLog(geometryShader);
-        // System.out.println("SHADER_INFO_LOG_START=====");
-        // System.out.println(log);
-        // System.out.println("SHADER_INFO_LOG_END========");
-        //
-        // throw new RuntimeException("Geometry shader compillation failed");
-        // }
+        this.u_projViewTrans = this.shaderProgram.getUniformLocation("u_projViewTrans");
+        this.u_worldTrans = this.shaderProgram.getUniformLocation("u_worldTrans");
         
-        this.u_projViewTrans = this.shaderProgramm.getUniformLocation("u_projViewTrans");
-        this.u_worldTrans = this.shaderProgramm.getUniformLocation("u_worldTrans");
-        
-        this.vertexBufferObject.bind(this.shaderProgramm);
+        this.vertexBufferObject.bind(this.shaderProgram);
         this.vertexBufferObject.setVertices(this.vertices, 0, this.vertices.length);
         
         Gdx.gl.glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-        Gdx.gl.glEnable(GL20.GL_VERTEX_PROGRAM_POINT_SIZE);
     }
     
     @Override
@@ -136,21 +103,18 @@ public class RenderingTestGame extends Game {
             for (int i = 0; i < vertices.length; i += 3) {
                 vertices[i + 2] = MathUtils.random(1); // Alive or dead
             }
-            this.vertexBufferObject.bind(this.shaderProgramm);
+            this.vertexBufferObject.bind(this.shaderProgram);
             this.vertexBufferObject.setVertices(this.vertices, 0, this.vertices.length);
         }
         
-        this.shaderProgramm.begin();
+        this.shaderProgram.begin();
         
-        this.shaderProgramm.setUniformMatrix(this.u_projViewTrans, this.camera.combined);
-        this.shaderProgramm.setUniformMatrix(this.u_worldTrans, this.transformationMatrix);
-        
-        
-//        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        this.shaderProgram.setUniformMatrix(this.u_projViewTrans, this.camera.combined);
+        this.shaderProgram.setUniformMatrix(this.u_worldTrans, this.transformationMatrix);
         
         Gdx.gl.glDrawArrays(GL20.GL_POINTS, 0, this.vertexBufferObject.getNumVertices());
         
-        this.shaderProgramm.end();
+        this.shaderProgram.end();
         
         this.fpsLogger.log();
     }
@@ -158,6 +122,6 @@ public class RenderingTestGame extends Game {
     @Override
     public void dispose() {
         this.vertexBufferObject.dispose();
-        this.shaderProgramm.dispose();
+        this.shaderProgram.dispose();
     }
 }

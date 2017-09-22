@@ -1,5 +1,9 @@
 package de.fjobilabs.libgdx.graphics;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -110,6 +114,22 @@ public class ExtendedShaderProgram extends ShaderProgram {
         }
         
         int program = linkProgram();
+        
+        ByteBuffer tmp = ByteBuffer.allocateDirect(4);
+        tmp.order(ByteOrder.nativeOrder());
+        IntBuffer intbuf = tmp.asIntBuffer();
+        
+        GL20 gl = Gdx.gl;
+        gl.glValidateProgram(program);
+        intbuf.clear();
+        gl.glGetProgramiv(program, GL20.GL_VALIDATE_STATUS, intbuf);
+        int valid = intbuf.get(0);
+        if (valid == GL20.GL_FALSE) {
+            String log = gl.glGetProgramInfoLog(program);
+            System.err.println("validation status " + valid + " :" + log);
+            return;
+        }
+        
         this.shaderProgrammAccessor.setProgram(program);
         if (program == -1) {
             this.shaderProgrammAccessor.setIsCompiled(false);
