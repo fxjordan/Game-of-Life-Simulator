@@ -20,7 +20,8 @@ public class GeometryShaderRenderingTest extends Game {
     
     private OrthographicCamera camera;
     private FitViewport viewport;
-    private GeometryShaderProgram box;
+//    private GeometryShaderProgram box;
+    private ExtendedShaderProgram shaderProgram;
     
     private int u_projViewTrans;
     private int u_worldTrans;
@@ -41,16 +42,20 @@ public class GeometryShaderRenderingTest extends Game {
         this.camera.update();
         this.viewport = new FitViewport(width, height, this.camera);
         
-        this.box = new GeometryShaderProgram();
+//        this.box = new GeometryShaderProgram();
         
-        ExtendedShaderProgram shaderProgram = new ExtendedShaderProgram(
+        this.shaderProgram = new ExtendedShaderProgram(
                 Gdx.files.internal("shaders/geometry-shader-test/vertexShader.glsl"),
                 Gdx.files.internal("shaders/geometry-shader-test/fragmentShader.glsl"),
                 Gdx.files.internal("shaders/geometry-shader-test/geometryShader.glsl"));
         
-        this.u_projViewTrans = this.box.getUniformLocation("u_projViewTrans");
-        this.u_worldTrans = this.box.getUniformLocation("u_worldTrans");
-        this.u_test = this.box.getUniformLocation("u_test");
+//        this.u_projViewTrans = this.box.getUniformLocation("u_projViewTrans");
+//        this.u_worldTrans = this.box.getUniformLocation("u_worldTrans");
+//        this.u_test = this.box.getUniformLocation("u_test");
+        
+        this.u_projViewTrans = this.shaderProgram.getUniformLocation("u_projViewTrans");
+        this.u_worldTrans = this.shaderProgram.getUniformLocation("u_worldTrans");
+        this.u_test = this.shaderProgram.getUniformLocation("u_test");
         
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         
@@ -66,11 +71,15 @@ public class GeometryShaderRenderingTest extends Game {
     public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         
-        box.begin();
+//        box.begin();
+        this.shaderProgram.begin();
         
-        this.box.setUniformMatrix(this.u_projViewTrans, this.camera.combined);
-        this.box.setUniformMatrix(this.u_worldTrans, this.transformationMatrix);
-        this.box.setUniformi(this.u_test, 42);
+//        this.box.setUniformMatrix(this.u_projViewTrans, this.camera.combined);
+//        this.box.setUniformMatrix(this.u_worldTrans, this.transformationMatrix);
+//        this.box.setUniformi(this.u_test, 42);
+        this.shaderProgram.setUniformMatrix(this.u_projViewTrans, this.camera.combined);
+        this.shaderProgram.setUniformMatrix(this.u_worldTrans, this.transformationMatrix);
+        this.shaderProgram.setUniformi(this.u_test, 42);
         
         GL11.glBegin(GL11.GL_POINTS);
         GL11.glVertex3f(50.0f, 52.0f, 0.0f);
@@ -79,11 +88,13 @@ public class GeometryShaderRenderingTest extends Game {
         GL11.glVertex3f(80.0f, 40.0f, 0.0f);
         GL11.glEnd();
         
-        box.end();
+//        box.end();
+        this.shaderProgram.end();
     }
     
     @Override
     public void dispose() {
-        this.box.dispose();
+//        this.box.dispose();
+        this.shaderProgram.dispose();
     }
 }

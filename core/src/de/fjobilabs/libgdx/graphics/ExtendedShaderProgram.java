@@ -1,14 +1,11 @@
 package de.fjobilabs.libgdx.graphics;
 
-import java.lang.reflect.Field;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.VertexBufferObject;
-import com.badlogic.gdx.utils.reflect.Method;
 
 /**
  * An {@code ExtendedShaderProgram} encapsulates a vertex, fragment and geometry
@@ -40,6 +37,13 @@ import com.badlogic.gdx.utils.reflect.Method;
  * @author Felix Jordan
  * @version 1.0
  * @since 20.09.2017 - 22:56:02
+ */
+/*
+ * TODO Currently checkManaged() will always compile the program without the
+ * geometry shader if the ShaderProgram gets invalidated. Maybe we have to use a
+ * proxy class around ShaderProgram to prevent that. This way it would also be
+ * possible to improve the complete code because we can use aspect
+ * orientated-programming to modify the internal methods of Shader Program.
  */
 public class ExtendedShaderProgram extends ShaderProgram {
     
@@ -75,21 +79,15 @@ public class ExtendedShaderProgram extends ShaderProgram {
             this.shaderProgrammAccessor.fetchAttributes();
             this.shaderProgrammAccessor.fetchUniforms();
         }
-        
-        // TODO Add geometry shader to existing shader program
-        // See parent constructor for reference
-        // 1. Load and compile geometry shader
-        // 2. Access underlying shader program though reflection.
-        // 3. Attach geometry shader to existing program
-        // 4. Link shader program (+check status and validate)
-        // [5. Fetch attributes again (reflection)] (first test vertex
-        // attributes)
-        // 5. Fetch uniforms again (reflection)
     }
     
     public ExtendedShaderProgram(FileHandle vertexShader, FileHandle fragmentShader,
             FileHandle geometryShader) {
         this(vertexShader.readString(), fragmentShader.readString(), geometryShader.readString());
+    }
+    
+    public String getGeometryShaderSource() {
+        return geometryShaderSource;
     }
     
     /**
@@ -111,16 +109,8 @@ public class ExtendedShaderProgram extends ShaderProgram {
             return;
         }
         
-        int program = this.shaderProgrammAccessor.getProgramm();
-        if (program == -1) {
-            program = createProgram();
-        } else {
-            detachShaders(program);
-        }
-        
-        // Only attach geometry shader. linkProgram(int) will do the rest.
-        Gdx.gl.glAttachShader(program, this.geometryShaderHandle);
-        program = this.shaderProgrammAccessor.linkProgram(program);
+        int program = linkProgram();
+        this.shaderProgrammAccessor.setProgram(program);
         if (program == -1) {
             this.shaderProgrammAccessor.setIsCompiled(false);
             return;
@@ -129,10 +119,18 @@ public class ExtendedShaderProgram extends ShaderProgram {
         this.shaderProgrammAccessor.setIsCompiled(true);
     }
     
-    private void detachShaders(int program) {
+    private int linkProgram() {
         GL20 gl = Gdx.gl;
-        gl.glDetachShader(program, this.shaderProgrammAccessor.getVertexShaderHandle());
-        gl.glDetachShader(program, this.shaderProgrammAccessor.getFragmentShaderHandle());
+        int program = this.shaderProgrammAccessor.getProgramm();
+        if (program == -1) {
+            program = createProgram();
+        } else {
+            gl.glDetachShader(program, this.shaderProgrammAccessor.getVertexShaderHandle());
+            gl.glDetachShader(program, this.shaderProgrammAccessor.getFragmentShaderHandle());
+        }
+        
+        // Only attach geometry shader. linkProgram(int) will do the rest.
+        gl.glAttachShader(program, this.geometryShaderHandle);
+        return this.shaderProgrammAccessor.linkProgram(program);
     }
-    
 }

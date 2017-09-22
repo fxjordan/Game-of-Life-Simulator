@@ -68,6 +68,10 @@ class ShaderProgrammAccessor {
         return getIntFieldValue(this.programField);
     }
     
+    void setProgram(int program) {
+        setShaderProgramFieldValue(this.programField, program);
+    }
+    
     int getVertexShaderHandle() {
         return getIntFieldValue(this.vertexShaderHandleField);
     }
