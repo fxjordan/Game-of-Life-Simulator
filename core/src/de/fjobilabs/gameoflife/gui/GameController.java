@@ -24,15 +24,21 @@ public class GameController extends InputAdapter {
     private static final float ZOOM_SPEED = 0.5f;
     private static final float MOVE_SPEED = 10.0f;
     
+    private static final int EDIT_TYPE_NONE = -1;
+    private static final int EDIT_TYPE_ADD = 0;
+    private static final int EDIT_TYPE_REMOVE = 1;
+    
     private Simulation simulation;
     private WorldRenderer worldRenderer;
     private Vector2 touchPoint;
     private boolean editMode;
+    private int currentEditType;
     
     public GameController(Simulation simulation, WorldRenderer worldRenderer) {
         this.simulation = simulation;
         this.worldRenderer = worldRenderer;
         this.touchPoint = new Vector2();
+        this.currentEditType = EDIT_TYPE_NONE;
     }
     
     public void update(float delta) {
@@ -56,12 +62,49 @@ public class GameController extends InputAdapter {
     
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (button == Buttons.LEFT && this.editMode) {
+        if (this.currentEditType != EDIT_TYPE_NONE || !this.editMode) {
+            return false;
+        }
+        if (button == Buttons.LEFT) {
+            this.currentEditType = EDIT_TYPE_ADD;
+            return true;
+        }
+        if (button == Buttons.RIGHT) {
+            this.currentEditType = EDIT_TYPE_REMOVE;
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        if (this.currentEditType == EDIT_TYPE_NONE || !this.editMode) {
+            return false;
+        }
+        if (this.currentEditType == EDIT_TYPE_ADD) {
             setCellState(screenX, screenY, Cell.ALIVE);
             return true;
         }
-        if (button == Buttons.RIGHT && this.editMode) {
+        if (this.currentEditType == EDIT_TYPE_REMOVE) {
             setCellState(screenX, screenY, Cell.DEAD);
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (this.currentEditType == EDIT_TYPE_NONE || !this.editMode) {
+            return false;
+        }
+        if (this.currentEditType == EDIT_TYPE_ADD && button == Buttons.LEFT) {
+            setCellState(screenX, screenY, Cell.ALIVE);
+            this.currentEditType = EDIT_TYPE_NONE;
+            return true;
+        }
+        if (this.currentEditType == EDIT_TYPE_REMOVE && button == Buttons.RIGHT) {
+            setCellState(screenX, screenY, Cell.DEAD);
+            this.currentEditType = EDIT_TYPE_NONE;
             return true;
         }
         return false;
