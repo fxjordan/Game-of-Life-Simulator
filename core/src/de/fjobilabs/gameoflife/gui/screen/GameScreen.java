@@ -58,7 +58,7 @@ public class GameScreen extends ScreenAdapter {
         // Test code:
         // World world = new FixedSizeBorderedWorld(10, 10);
         
-        World world = new FixedSizeTorusWorld(1000, 1000);
+        World world = new FixedSizeTorusWorld(1800, 1700);
         
 //        Pattern pattern = new ArrayPattern(3, 3,
 //                new int[][] {
@@ -68,7 +68,7 @@ public class GameScreen extends ScreenAdapter {
 //        
 //        pattern.apply(world, 250, 250);
         
-        RLEParser parser = new RLEParser(Gdx.files.internal("patterns/puffer1.rle").read());
+        RLEParser parser = new RLEParser(Gdx.files.internal("patterns/turingmachine.rle").read());
         try {
             parser.parse();
         } catch (IOException e) {
@@ -77,9 +77,9 @@ public class GameScreen extends ScreenAdapter {
         RLEPattern pattern = parser.createPattern();
         int x = world.getCenterX() - pattern.getWidth() / 2;
         int y = world.getCenterY() + pattern.getHeight() / 2;
-        pattern.apply(world, x, y);
+//        pattern.apply(world, x, y);
         
-        // RuleSet ruleSet = new GameOfLifeRuleSet("1357/1357", new int[] {1, 3,
+//         RuleSet ruleSet = new GameOfLifeRuleSet("1357/1357", new int[] {1, 3,
         // 5, 7}, new int[] {1, 3, 5, 7});
 //         RuleSet ruleSet = GameOfLifeRuleSet.parse("1357/1357");
         RuleSet ruleSet = new StandardGameOfLifeRuleSet();

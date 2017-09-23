@@ -55,18 +55,15 @@ public class LoadingScreen extends ScreenAdapter {
         this.viewport.update(width, height, true);
     }
     
-    public void update(float delta) {
+    @Override
+    public void render(float delta) {
         this.loadingTime += delta;
         
         if (this.assetManager.update(delta)) {
             logger.info("Assets loaded in " + this.loadingTime + " seconds");
             this.screenManager.showScreen(GameOfLifeScreenManager.GAME_SCREEN);
+            return;
         }
-    }
-    
-    @Override
-    public void render(float delta) {
-        update(delta);
         
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
