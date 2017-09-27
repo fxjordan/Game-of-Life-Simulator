@@ -1,5 +1,7 @@
 package de.fjobilabs.gameoflife.gui;
 
+import javax.xml.ws.WebEndpoint;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
@@ -17,9 +19,13 @@ import de.fjobilabs.libgdx.util.LoggerFactory;
  * @version 1.0
  * @since 17.09.2017 - 01:43:12
  */
-public class GameController extends InputAdapter {
+/*
+ * TODO Controller is not responsible for key events anymore. The java swing
+ * wrapper will handle this.
+ */
+public class SimulationController extends InputAdapter {
     
-    private static final Logger logger = LoggerFactory.getLogger(GameController.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimulationController.class);
     
     private static final float ZOOM_SPEED = 0.5f;
     private static final float MOVE_SPEED = 10.0f;
@@ -34,14 +40,31 @@ public class GameController extends InputAdapter {
     private boolean editMode;
     private int currentEditType;
     
-    public GameController(Simulation simulation, WorldRenderer worldRenderer) {
-        this.simulation = simulation;
+    public SimulationController(WorldRenderer worldRenderer) {
         this.worldRenderer = worldRenderer;
         this.touchPoint = new Vector2();
+        reset();
+    }
+    
+    public void setSimulation(Simulation simulation) {
+        this.simulation = simulation;
+        reset();
+    }
+    
+    public void setEditMode(boolean enabled) {
+        this.editMode = enabled;
+        this.currentEditType = EDIT_TYPE_NONE;
+    }
+    
+    public void reset() {
+        this.editMode = false;
         this.currentEditType = EDIT_TYPE_NONE;
     }
     
     public void update(float delta) {
+        if (this.simulation == null) {
+            return;
+        }
         float moveSpeed = MOVE_SPEED;
         if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)) {
             moveSpeed *= 20;
@@ -62,6 +85,9 @@ public class GameController extends InputAdapter {
     
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (this.simulation == null) {
+            return false;
+        }
         if (this.currentEditType != EDIT_TYPE_NONE || !this.editMode) {
             return false;
         }
@@ -78,6 +104,9 @@ public class GameController extends InputAdapter {
     
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        if (this.simulation == null) {
+            return false;
+        }
         if (this.currentEditType == EDIT_TYPE_NONE || !this.editMode) {
             return false;
         }
@@ -94,6 +123,9 @@ public class GameController extends InputAdapter {
     
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (this.simulation == null) {
+            return false;
+        }
         if (this.currentEditType == EDIT_TYPE_NONE || !this.editMode) {
             return false;
         }
@@ -124,7 +156,15 @@ public class GameController extends InputAdapter {
     }
     
     @Override
+    @Deprecated
+    @SuppressWarnings("unused")
     public boolean keyDown(int keycode) {
+        if (true) {
+            return false;
+        }
+        if (this.simulation == null) {
+            return false;
+        }
         if (keycode == Keys.SPACE) {
             this.simulation.setRunning(!this.simulation.isRunning());
             return true;
@@ -152,6 +192,9 @@ public class GameController extends InputAdapter {
     
     @Override
     public boolean scrolled(int amount) {
+        if (this.simulation == null) {
+            return false;
+        }
         float zoomSpeed = ZOOM_SPEED;
         if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)) {
             zoomSpeed *= 20;

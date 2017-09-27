@@ -10,17 +10,14 @@ import com.badlogic.gdx.utils.Logger;
 
 import de.fjobilabs.gameoflife.GameOfLifeAssetManager;
 import de.fjobilabs.gameoflife.GameOfLifeScreenManager;
-import de.fjobilabs.gameoflife.gui.GameController;
+import de.fjobilabs.gameoflife.gui.SimulationController;
 import de.fjobilabs.gameoflife.gui.WorldRenderer;
 import de.fjobilabs.gameoflife.model.Simulation;
 import de.fjobilabs.gameoflife.model.World;
 import de.fjobilabs.gameoflife.model.simulation.CellularAutomatonSimulation;
-import de.fjobilabs.gameoflife.model.simulation.ca.ArrayPattern;
-import de.fjobilabs.gameoflife.model.simulation.ca.Pattern;
 import de.fjobilabs.gameoflife.model.simulation.ca.RLEParser;
 import de.fjobilabs.gameoflife.model.simulation.ca.RLEPattern;
 import de.fjobilabs.gameoflife.model.simulation.ca.RuleSet;
-import de.fjobilabs.gameoflife.model.simulation.ca.rules.GameOfLifeRuleSet;
 import de.fjobilabs.gameoflife.model.simulation.ca.rules.StandardGameOfLifeRuleSet;
 import de.fjobilabs.gameoflife.model.worlds.FixedSizeTorusWorld;
 import de.fjobilabs.libgdx.util.LoggerFactory;
@@ -30,10 +27,8 @@ import de.fjobilabs.libgdx.util.LoggerFactory;
  * @version 1.0
  * @since 16.09.2017 - 14:55:UNKNOWN
  */
+@Deprecated
 public class GameScreen extends ScreenAdapter {
-    
-    private static final float SCENE_WIDTH = 800;
-    private static final float SCENE_HEIGHT = 480;
     
     private static final int TICKS_PER_SECOND = 10;
     private static final float TICK = 1.0f / (float) TICKS_PER_SECOND;
@@ -46,7 +41,7 @@ public class GameScreen extends ScreenAdapter {
     
     private Simulation simulation;
     private WorldRenderer worldRenderer;
-    private GameController gameController;
+    private SimulationController gameController;
     private float time;
     
     private FPSLogger fpsLogger;
@@ -58,7 +53,7 @@ public class GameScreen extends ScreenAdapter {
         // Test code:
         // World world = new FixedSizeBorderedWorld(10, 10);
         
-        World world = new FixedSizeTorusWorld(1800, 1700);
+        World world = new FixedSizeTorusWorld(50, 50);
         
 //        Pattern pattern = new ArrayPattern(3, 3,
 //                new int[][] {
@@ -87,10 +82,14 @@ public class GameScreen extends ScreenAdapter {
         this.simulation = new CellularAutomatonSimulation(world, ruleSet);
         // this.simulation = new LangtonsAntSimulation(world);
         
-        this.worldRenderer = new WorldRenderer(assetManager, world);
+        this.worldRenderer = new WorldRenderer();
+        
+        this.worldRenderer.setWorld(world);
+        
 //        this.worldRenderer.setZoom(46);
         
-        this.gameController = new GameController(this.simulation, this.worldRenderer);
+        this.gameController = new SimulationController(this.worldRenderer);
+        this.gameController.setSimulation(this.simulation);
         Gdx.input.setInputProcessor(this.gameController);
         
 //        this.simulation.setRunning(true);

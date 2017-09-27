@@ -13,11 +13,22 @@ public interface CellRenderer {
     
     public boolean isBorderEnabled();
     
+    /**
+     * Configures the renderer for a specific world size.
+     * 
+     * @param worldWidth The world width in cells.
+     * @param worldHeight the world height in cells.
+     */
+    public default void configure(int worldWidth, int worldHeight) {
+    }
+    
     public void begin(Camera camera);
     
     public void drawCell(int x, int y, int state);
     
     public void end();
+    
+    public default void hide() {};
     
     public void dispose();
 }

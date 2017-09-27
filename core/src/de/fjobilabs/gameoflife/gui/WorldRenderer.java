@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 
-import de.fjobilabs.gameoflife.GameOfLifeAssetManager;
 import de.fjobilabs.gameoflife.model.World;
 import de.fjobilabs.libgdx.util.LoggerFactory;
 
@@ -28,15 +27,10 @@ public class WorldRenderer {
     private CellRenderer cellRenderer;
     private boolean enabled;
     
-    public WorldRenderer(GameOfLifeAssetManager assetManager, World world) {
-        this.world = world;
+    public WorldRenderer() {
         this.camera = new OrthographicCamera();
-        this.camera.position.x = this.world.getCenterX();
-        this.camera.position.y = this.world.getCenterY();
         this.viewport = new FillViewport(50, 50, this.camera);
-        // this.cellRenderer = new TextureCellRenderer(assetManager);
-        // this.cellRenderer = new ShapeCellRenderer();
-        this.cellRenderer = new HighPerformanceCellRenderer(world.getWidth(), world.getHeight());
+        this.cellRenderer = new HighPerformanceCellRenderer();
         this.enabled = true;
     }
     
@@ -45,7 +39,7 @@ public class WorldRenderer {
     }
     
     public void render() {
-        if (!this.enabled) {
+        if (!this.enabled || this.world == null) {
             return;
         }
         
@@ -62,6 +56,18 @@ public class WorldRenderer {
         }
         
         this.cellRenderer.end();
+    }
+    
+    public void hide() {
+        this.cellRenderer.hide();
+    }
+    
+    public void setWorld(World world) {
+        this.world = world;
+        this.camera.position.x = world.getCenterX();
+        this.camera.position.y = world.getCenterY();
+        this.camera.update();
+        this.cellRenderer.configure(world.getWidth(), world.getHeight());
     }
     
     public Vector2 touchToWorld(Vector2 screenCoords) {

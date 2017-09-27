@@ -42,7 +42,8 @@ public class HighPerformanceCellRendererTest extends Game {
         this.camera.update();
         this.viewport = new FitViewport(width, height, this.camera);
         
-        this.cellRenderer = new HighPerformanceCellRenderer(width, height);
+        this.cellRenderer = new HighPerformanceCellRenderer();
+        this.cellRenderer.configure(width, height);
         
         Gdx.gl.glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
     }

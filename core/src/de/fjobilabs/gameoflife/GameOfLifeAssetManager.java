@@ -19,6 +19,7 @@ public class GameOfLifeAssetManager {
     public static final String ALIVE_CELL_NO_BORDER = "alive_cell_simple_2.png";
 //    public static final String DEAD_CELL_NO_BORDER = "dead_cell_simple.png";
 //    public static final String ALIVE_CELL_NO_BORDER = "alive_cell_simple.png";
+    public static final String IDLE_IMAGE = "idle.png";
     
     private final AssetManager assetManager;
     
@@ -57,5 +58,6 @@ public class GameOfLifeAssetManager {
         this.assetManager.load(ALIVE_CELL, Texture.class, textureParameter);
         this.assetManager.load(DEAD_CELL_NO_BORDER, Texture.class, textureParameter);
         this.assetManager.load(ALIVE_CELL_NO_BORDER, Texture.class, textureParameter);
+        this.assetManager.load(IDLE_IMAGE, Texture.class);
     }
 }
