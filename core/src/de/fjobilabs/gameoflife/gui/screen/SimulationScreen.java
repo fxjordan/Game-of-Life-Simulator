@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Logger;
 
+import de.fjobilabs.gameoflife.GameOfLifeAssetManager;
 import de.fjobilabs.gameoflife.gui.SimulationController;
 import de.fjobilabs.gameoflife.gui.WorldRenderer;
 import de.fjobilabs.gameoflife.model.Simulation;
@@ -34,8 +35,8 @@ public class SimulationScreen extends ScreenAdapter {
     private float updateDuration;
     private int maxUpdatesPerFrame;
     
-    public SimulationScreen() {
-        this.worldRenderer = new WorldRenderer();
+    public SimulationScreen(GameOfLifeAssetManager assetManager) {
+        this.worldRenderer = new WorldRenderer(assetManager);
         this.simulationController = new SimulationController(this.worldRenderer);
         this.fpsLogger = new FPSLogger();
         setUpdatesPerSecond(DEFAULT_UPDATES_PER_SECOND);

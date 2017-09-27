@@ -1,7 +1,6 @@
 package de.fjobilabs.gameoflife.desktop;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -10,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import de.fjobilabs.gameoflife.desktop.gui.ControlPanel;
 import de.fjobilabs.gameoflife.desktop.gui.SimulatorMenuBar;
 import de.fjobilabs.gameoflife.desktop.gui.actions.ActionManager;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.PauseSimulationAction;
@@ -51,7 +51,7 @@ public class SimulatorFrame extends JFrame {
         registerActions();
         
         initLayout();
-        setJMenuBar(new SimulatorMenuBar(this.actionManager));
+        setJMenuBar(new SimulatorMenuBar(this.actionManager).getMenuBar());
     }
     
     private void registerActions() {
@@ -78,7 +78,7 @@ public class SimulatorFrame extends JFrame {
         
         this.simulationPanel = new SimulationPanel(this.simulator);
         
-        JPanel controlPanel = createControlPanel();
+        JPanel controlPanel = new ControlPanel(this.actionManager);
         controlPanel.setBorder(BorderFactory.createTitledBorder("Simulation Control"));
         
         GroupLayout groupLayout = new GroupLayout(getContentPane());
@@ -92,19 +92,13 @@ public class SimulatorFrame extends JFrame {
                                         GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)))
                         .addContainerGap()));
         groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.TRAILING).addGroup(groupLayout
-                .createSequentialGroup().addContainerGap().addComponent(controlPanel, 50, 75, 100)
+                .createSequentialGroup().addContainerGap().addComponent(controlPanel, 50, 75, 110)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
                         .addComponent(worldEditorPanel, GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
                         .addComponent(simulationPanel, GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE))
                 .addContainerGap()));
         getContentPane().setLayout(groupLayout);
-    }
-    
-    private JPanel createControlPanel() {
-        JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        return controlPanel;
     }
     
     @Override

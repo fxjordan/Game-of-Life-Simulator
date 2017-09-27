@@ -24,8 +24,9 @@ public class SimulatorApplication extends Game {
     public void create() {
         this.assetManager = new GameOfLifeAssetManager();
         this.assetManager.load();
+        this.assetManager.finishLoading();
         
-        this.simulationScreen = new SimulationScreen();
+        this.simulationScreen = new SimulationScreen(assetManager);
         this.idleScreen = new IdleScreen(assetManager);
         
         setScreen(this.idleScreen);

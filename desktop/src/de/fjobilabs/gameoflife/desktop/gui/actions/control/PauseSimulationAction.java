@@ -29,6 +29,7 @@ public class PauseSimulationAction extends AbstractSimulationAction {
             setEnabled(false);
             this.actionManager.setActionEnabled(StartSimulationAction.ACTION_COMMAND, true);
             this.actionManager.setActionEnabled(StepForwardAction.ACTION_COMMAND, true);
+            this.actionManager.setActionEnabled(StepBackwardAction.ACTION_COMMAND, true);
         }
     }
 }

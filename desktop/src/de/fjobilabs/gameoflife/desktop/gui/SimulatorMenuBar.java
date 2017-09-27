@@ -21,18 +21,22 @@ import de.fjobilabs.gameoflife.desktop.gui.actions.file.SaveSimulationAsAction;
  * @version 1.0
  * @since 25.09.2017 - 17:45:18
  */
-public class SimulatorMenuBar extends JMenuBar {
-    
-    private static final long serialVersionUID = 1720395710634662462L;
+public class SimulatorMenuBar {
     
     private ActionManager actionManager;
+    private JMenuBar menuBar;
     
     public SimulatorMenuBar(ActionManager actionManager) {
         this.actionManager = actionManager;
-        add(createFileMenu());
-        add(createEditMenu());
-        add(createViewMenu());
-        add(createSimulationMenu());
+        this.menuBar = new JMenuBar();
+        this.menuBar.add(createFileMenu());
+        this.menuBar.add(createEditMenu());
+        this.menuBar.add(createViewMenu());
+        this.menuBar.add(createSimulationMenu());
+    }
+    
+    public JMenuBar getMenuBar() {
+        return menuBar;
     }
     
     private JMenu createFileMenu() {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 
+import de.fjobilabs.gameoflife.GameOfLifeAssetManager;
 import de.fjobilabs.gameoflife.model.World;
 import de.fjobilabs.libgdx.util.LoggerFactory;
 
@@ -27,10 +28,11 @@ public class WorldRenderer {
     private CellRenderer cellRenderer;
     private boolean enabled;
     
-    public WorldRenderer() {
+    public WorldRenderer(GameOfLifeAssetManager assetManager) {
         this.camera = new OrthographicCamera();
         this.viewport = new FillViewport(50, 50, this.camera);
-        this.cellRenderer = new HighPerformanceCellRenderer();
+//        this.cellRenderer = new HighPerformanceCellRenderer();
+        this.cellRenderer = new TextureCellRenderer(assetManager);
         this.enabled = true;
     }
     

@@ -82,7 +82,7 @@ public class GameScreen extends ScreenAdapter {
         this.simulation = new CellularAutomatonSimulation(world, ruleSet);
         // this.simulation = new LangtonsAntSimulation(world);
         
-        this.worldRenderer = new WorldRenderer();
+        this.worldRenderer = new WorldRenderer(assetManager);
         
         this.worldRenderer.setWorld(world);
         

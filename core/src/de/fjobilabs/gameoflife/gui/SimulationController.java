@@ -1,7 +1,5 @@
 package de.fjobilabs.gameoflife.gui;
 
-import javax.xml.ws.WebEndpoint;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;

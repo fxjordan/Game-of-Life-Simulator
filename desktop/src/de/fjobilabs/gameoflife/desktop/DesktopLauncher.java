@@ -15,19 +15,19 @@ public class DesktopLauncher {
     }
     
     private static void runGameOfLifeFrame() {
-        setLookAndFell();
+        setLookAndFeel();
         SwingUtilities.invokeLater(() -> {
             SimulatorFrame frame = new SimulatorFrame();
             frame.setVisible(true);
         });
     }
 
-    private static void setLookAndFell() {
+    private static void setLookAndFeel() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
                 | UnsupportedLookAndFeelException e) {
-            System.err.println("Failed to set LookAndFell");
+            System.err.println("Failed to set LookAndFeel");
             e.printStackTrace();
         }
     }

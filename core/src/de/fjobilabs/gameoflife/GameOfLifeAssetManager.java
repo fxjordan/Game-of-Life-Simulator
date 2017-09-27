@@ -60,4 +60,8 @@ public class GameOfLifeAssetManager {
         this.assetManager.load(ALIVE_CELL_NO_BORDER, Texture.class, textureParameter);
         this.assetManager.load(IDLE_IMAGE, Texture.class);
     }
+
+    public void finishLoading() {
+        this.assetManager.finishLoading();
+    }
 }
