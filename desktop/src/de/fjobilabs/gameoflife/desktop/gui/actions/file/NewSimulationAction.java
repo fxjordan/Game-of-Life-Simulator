@@ -9,7 +9,10 @@ import javax.swing.KeyStroke;
 import de.fjobilabs.gameoflife.desktop.SimulatorFrame;
 import de.fjobilabs.gameoflife.desktop.gui.actions.AbstractFileMenuAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.ActionManager;
+import de.fjobilabs.gameoflife.desktop.gui.actions.control.PauseSimulationAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.StartSimulationAction;
+import de.fjobilabs.gameoflife.desktop.gui.actions.control.StepBackwardAction;
+import de.fjobilabs.gameoflife.desktop.gui.actions.control.StepForwardAction;
 import de.fjobilabs.gameoflife.desktop.gui.dialog.NewSimulationDialog;
 import de.fjobilabs.gameoflife.desktop.simulator.SimulationConfiguration;
 import de.fjobilabs.gameoflife.desktop.simulator.Simulator;
@@ -49,6 +52,9 @@ public class NewSimulationAction extends AbstractFileMenuAction {
             this.simulator.createSimulation(config);
             
             this.actionManager.setActionEnabled(StartSimulationAction.ACTION_COMMAND, true);
+            this.actionManager.setActionEnabled(PauseSimulationAction.ACTION_COMMAND, false);
+            this.actionManager.setActionEnabled(StepForwardAction.ACTION_COMMAND, true);
+            this.actionManager.setActionEnabled(StepBackwardAction.ACTION_COMMAND, true);
             this.actionManager.setActionEnabled(CloseSimulationAction.ACTION_COMMAND, true);
             this.actionManager.setActionEnabled(SaveSimulationAction.ACTION_COMMAND, true);
             this.actionManager.setActionEnabled(SaveSimulationAsAction.ACTION_COMMAND, true);

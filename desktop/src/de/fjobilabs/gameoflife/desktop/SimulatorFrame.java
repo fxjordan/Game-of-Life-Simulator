@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import de.fjobilabs.gameoflife.desktop.gui.ControlPanel;
+import de.fjobilabs.gameoflife.desktop.gui.SimulationPanel;
 import de.fjobilabs.gameoflife.desktop.gui.SimulatorMenuBar;
 import de.fjobilabs.gameoflife.desktop.gui.actions.ActionManager;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.PauseSimulationAction;
@@ -22,7 +23,6 @@ import de.fjobilabs.gameoflife.desktop.gui.actions.file.NewSimulationAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.file.OpenSimulationAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.file.SaveSimulationAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.file.SaveSimulationAsAction;
-import de.fjobilabs.gameoflife.desktop.simulator.SimulationPanel;
 import de.fjobilabs.gameoflife.desktop.simulator.Simulator;
 
 /**
@@ -36,7 +36,7 @@ public class SimulatorFrame extends JFrame {
     
     private Simulator simulator;
     private ActionManager actionManager;
-    private SimulationPanel simulationPanel;
+    private SimulationPanel simulationRendererPanel;
     
     public SimulatorFrame() {
         setTitle("Game of Life Simulator");
@@ -76,34 +76,37 @@ public class SimulatorFrame extends JFrame {
         JPanel worldEditorPanel = new JPanel();
         worldEditorPanel.setBorder(BorderFactory.createTitledBorder("World Editor"));
         
-        this.simulationPanel = new SimulationPanel(this.simulator);
+        this.simulationRendererPanel = new SimulationPanel(this.simulator);
         
         JPanel controlPanel = new ControlPanel(this.actionManager);
         controlPanel.setBorder(BorderFactory.createTitledBorder("Simulation Control"));
         
         GroupLayout groupLayout = new GroupLayout(getContentPane());
         groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-                .addGroup(groupLayout.createSequentialGroup().addContainerGap().addGroup(groupLayout
-                        .createParallelGroup(Alignment.LEADING)
-                        .addComponent(controlPanel, GroupLayout.DEFAULT_SIZE, 599, Short.MAX_VALUE)
-                        .addGroup(groupLayout.createSequentialGroup()
-                                .addComponent(worldEditorPanel, GroupLayout.PREFERRED_SIZE, 100, 300)
-                                .addPreferredGap(ComponentPlacement.RELATED).addComponent(simulationPanel,
-                                        GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)))
+                .addGroup(groupLayout.createSequentialGroup().addContainerGap()
+                        .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+                                .addComponent(controlPanel, GroupLayout.DEFAULT_SIZE, 599, Short.MAX_VALUE)
+                                .addGroup(groupLayout.createSequentialGroup()
+                                        .addComponent(worldEditorPanel, GroupLayout.PREFERRED_SIZE, 100, 300)
+                                        .addPreferredGap(ComponentPlacement.RELATED)
+                                        .addComponent(this.simulationRendererPanel, GroupLayout.DEFAULT_SIZE,
+                                                492, Short.MAX_VALUE)))
                         .addContainerGap()));
-        groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.TRAILING).addGroup(groupLayout
-                .createSequentialGroup().addContainerGap().addComponent(controlPanel, 50, 75, 110)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-                        .addComponent(worldEditorPanel, GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
-                        .addComponent(simulationPanel, GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE))
-                .addContainerGap()));
+        groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+                .addGroup(groupLayout.createSequentialGroup().addContainerGap()
+                        .addComponent(controlPanel, 50, 75, 110).addPreferredGap(ComponentPlacement.RELATED)
+                        .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+                                .addComponent(worldEditorPanel, GroupLayout.DEFAULT_SIZE, 214,
+                                        Short.MAX_VALUE)
+                                .addComponent(this.simulationRendererPanel, GroupLayout.DEFAULT_SIZE, 214,
+                                        Short.MAX_VALUE))
+                        .addContainerGap()));
         getContentPane().setLayout(groupLayout);
     }
     
     @Override
     public void dispose() {
-        this.simulationPanel.dispose();
+        this.simulationRendererPanel.dispose();
         super.dispose();
     }
 }

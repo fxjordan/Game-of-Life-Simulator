@@ -1,6 +1,7 @@
 package de.fjobilabs.gameoflife;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 
@@ -61,6 +62,19 @@ public class SimulatorApplication extends Game {
     
     public void setEditMode(boolean enabled) {
         this.simulationScreen.getSimulationController().setEditMode(enabled);
+    }
+    
+    /**
+     * Returns the number of frames that are currently rendered per second.
+     * 
+     * @return The current FPS.
+     */
+    public int getFPS() {
+        return Gdx.graphics.getFramesPerSecond();
+    }
+    
+    public int getMeasuredUPS() {
+        return this.simulationScreen.getMeasuredUpdatesPerSecond();
     }
     
     private void changeToIdle() {

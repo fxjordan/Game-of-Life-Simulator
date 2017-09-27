@@ -29,7 +29,9 @@ public class SimulationScreen extends ScreenAdapter {
     private SimulationController simulationController;
     private FPSLogger fpsLogger;
     private Simulation simulation;
-    private float time;
+    private float fixedStepTime;
+    
+    private UPSCounter upsCounter;
     
     // Configuration variables
     private float updateDuration;
@@ -39,6 +41,7 @@ public class SimulationScreen extends ScreenAdapter {
         this.worldRenderer = new WorldRenderer(assetManager);
         this.simulationController = new SimulationController(this.worldRenderer);
         this.fpsLogger = new FPSLogger();
+        this.upsCounter = new UPSCounter();
         setUpdatesPerSecond(DEFAULT_UPDATES_PER_SECOND);
         setMaxUpdatesPerFrame(DEFAULT_MAX_UPDATES_PER_FRAME);
     }
@@ -67,13 +70,15 @@ public class SimulationScreen extends ScreenAdapter {
     
     private void update(float delta) {
         // Fixed time step updates
-        this.time += delta;
+        this.fixedStepTime += delta;
         int updates = 0;
-        while (time >= this.updateDuration && updates < this.maxUpdatesPerFrame) {
+        while (fixedStepTime >= this.updateDuration && updates < this.maxUpdatesPerFrame) {
             updateSimulation();
             updates++;
-            this.time -= this.updateDuration;
+            this.fixedStepTime -= this.updateDuration;
         }
+        
+        this.upsCounter.update();
         
         // Normal updates
         this.simulationController.update(delta);
@@ -81,6 +86,10 @@ public class SimulationScreen extends ScreenAdapter {
     
     private void updateSimulation() {
         if (this.simulation != null) {
+            // TODO Call counter only when simulation has made an update
+            if (this.simulation.isRunning()) {
+                this.upsCounter.logUpdate();
+            }
             this.simulation.update();
         }
     }
@@ -111,6 +120,18 @@ public class SimulationScreen extends ScreenAdapter {
     
     public void setUpdatesPerSecond(int updatesPerSecond) {
         this.updateDuration = 1.0f / (float) updatesPerSecond;
+    }
+    
+    /**
+     * Returns the number of updates which are currently calculated per
+     * second.<br>
+     * This value may not be the same as the theoretical UPS, which are set by
+     * the user.
+     * 
+     * @return The current UPS.
+     */
+    public int getMeasuredUpdatesPerSecond() {
+        return this.upsCounter.getUPS();
     }
     
     public void setMaxUpdatesPerFrame(int maxUpdatesPerFrame) {
