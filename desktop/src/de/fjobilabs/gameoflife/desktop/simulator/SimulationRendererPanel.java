@@ -32,10 +32,6 @@ public class SimulationRendererPanel extends JPanel {
         return this.simulatorApplication.getFPS();
     }
     
-    public int getUPS() {
-        return this.simulatorApplication.getMeasuredUPS();
-    }
-    
     public void dispose() {
         if (this.lwjglCanvas != null) {
             this.lwjglCanvas.stop();

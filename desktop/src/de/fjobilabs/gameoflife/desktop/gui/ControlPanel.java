@@ -9,13 +9,17 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 
 import de.fjobilabs.gameoflife.desktop.gui.actions.ActionManager;
+import de.fjobilabs.gameoflife.desktop.gui.actions.control.ChangeUPSAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.PauseSimulationAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.StartSimulationAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.StepBackwardAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.StepForwardAction;
+import de.fjobilabs.gameoflife.desktop.simulator.Simulator;
 
 /**
  * @author Felix Jordan
@@ -31,20 +35,27 @@ public class ControlPanel extends JPanel {
     
     private ActionManager actionManager;
     
-    public ControlPanel(ActionManager actionManager) {
+    public ControlPanel(Simulator simulator, ActionManager actionManager) {
         this.actionManager = actionManager;
         setBorder(BorderFactory.createTitledBorder("Control Panel"));
         
-        initLayout();
+        initLayout(simulator);
     }
     
-    private void initLayout() {
+    private void initLayout(Simulator simulator) {
         JButton startButton = createActionButton(StartSimulationAction.ACTION_COMMAND, "images/start.png");
         JButton pauseButton = createActionButton(PauseSimulationAction.ACTION_COMMAND, "images/pause.png");
         JButton stepForwardButton = createActionButton(StepForwardAction.ACTION_COMMAND,
                 "images/step-forward.png");
         JButton stepBackwardButton = createActionButton(StepBackwardAction.ACTION_COMMAND,
                 "images/step-backward.png");
+        
+        // TODO Make separator visible
+        JSeparator separator = new JSeparator();
+        separator.setOrientation(SwingConstants.VERTICAL);
+        
+        UPSController upsController = new UPSController(
+                this.actionManager.getAction(ChangeUPSAction.ACTION_COMMAND));
         
         GroupLayout groupLayout = new GroupLayout(this);
         groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
@@ -56,21 +67,29 @@ public class ControlPanel extends JPanel {
                 .addComponent(stepBackwardButton, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(stepForwardButton, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(100, Short.MAX_VALUE)));
-        groupLayout.setVerticalGroup(groupLayout
-                .createParallelGroup(Alignment.LEADING).addGroup(groupLayout.createSequentialGroup().addGap(7)
-                        .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
-                                .addGroup(Alignment.LEADING,
-                                        groupLayout.createParallelGroup(Alignment.BASELINE, false)
-                                                .addComponent(pauseButton, GroupLayout.PREFERRED_SIZE, 70,
-                                                        GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(startButton, GroupLayout.PREFERRED_SIZE, 70,
-                                                        GroupLayout.PREFERRED_SIZE))
-                                .addComponent(stepBackwardButton, Alignment.LEADING,
-                                        GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(stepForwardButton, Alignment.LEADING,
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+                        .addComponent(separator, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                                GroupLayout.PREFERRED_SIZE)
+                        .addComponent(upsController, GroupLayout.DEFAULT_SIZE, 370, 370))
+                .addGap(48)));
+        groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
+                .createSequentialGroup().addGap(7)
+                .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
+                        .addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+                                .addComponent(separator, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                                        GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(ComponentPlacement.RELATED).addComponent(upsController,
                                         GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(225, Short.MAX_VALUE)));
+                        .addComponent(pauseButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 70,
+                                Short.MAX_VALUE)
+                        .addComponent(startButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 70,
+                                Short.MAX_VALUE)
+                        .addComponent(stepBackwardButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 70,
+                                Short.MAX_VALUE)
+                        .addComponent(stepForwardButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 70,
+                                Short.MAX_VALUE))
+                .addContainerGap(223, Short.MAX_VALUE)));
         setLayout(groupLayout);
     }
     

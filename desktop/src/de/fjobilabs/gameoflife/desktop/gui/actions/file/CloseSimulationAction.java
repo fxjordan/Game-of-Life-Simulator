@@ -9,6 +9,7 @@ import javax.swing.KeyStroke;
 import de.fjobilabs.gameoflife.desktop.SimulatorFrame;
 import de.fjobilabs.gameoflife.desktop.gui.actions.AbstractFileMenuAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.ActionManager;
+import de.fjobilabs.gameoflife.desktop.gui.actions.control.ChangeUPSAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.PauseSimulationAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.StartSimulationAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.StepBackwardAction;
@@ -61,5 +62,6 @@ public class CloseSimulationAction extends AbstractFileMenuAction {
         this.actionManager.setActionEnabled(PauseSimulationAction.ACTION_COMMAND, false);
         this.actionManager.setActionEnabled(StepForwardAction.ACTION_COMMAND, false);
         this.actionManager.setActionEnabled(StepBackwardAction.ACTION_COMMAND, false);
+        this.actionManager.setActionEnabled(ChangeUPSAction.ACTION_COMMAND, false);
     }
 }

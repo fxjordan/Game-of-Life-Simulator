@@ -22,11 +22,14 @@ public class Simulator {
     
     private static final Logger logger = LoggerFactory.getLogger(Simulator.class);
     
+    public static final int DEFAULT_UPS = 10;
+    
     private SimulatorApplication simulatorApplication;
     
     private Simulation currentSimulation;
     private SimulationState currentSimulationState;
     private File currentSimulationFile;
+    private int ups;
     
     public Simulator() {
         this.simulatorApplication = new SimulatorApplication();
@@ -39,6 +42,7 @@ public class Simulator {
         this.currentSimulation = new CellularAutomatonSimulation(world, ruleSet);
         this.simulatorApplication.setSimulation(this.currentSimulation);
         this.simulatorApplication.setEditMode(true);
+        setUPS(DEFAULT_UPS);
         this.currentSimulationState = SimulationState.Created;
     }
     
@@ -65,6 +69,22 @@ public class Simulator {
     
     public File getCurrentSimulationFile() {
         return currentSimulationFile;
+    }
+    
+    public void setUPS(int ups) {
+        if (ups < 0) {
+            throw new IllegalArgumentException("UPS must be >= 0");
+        }
+        this.ups = ups;
+        this.simulatorApplication.setUps(ups);
+    }
+    
+    public int getUPS() {
+        return ups;
+    }
+    
+    public int getMeasuredUPS() {
+        return this.simulatorApplication.getMeasuredUPS();
     }
     
     public void startSimulation() {

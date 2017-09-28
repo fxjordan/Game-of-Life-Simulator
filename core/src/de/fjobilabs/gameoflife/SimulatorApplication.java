@@ -70,10 +70,20 @@ public class SimulatorApplication extends Game {
      * @return The current FPS.
      */
     public int getFPS() {
+        if (Gdx.graphics == null) {
+            return 0;
+        }
         return Gdx.graphics.getFramesPerSecond();
     }
     
+    public void setUps(int ups) {
+        this.simulationScreen.setUpdatesPerSecond(ups);
+    }
+    
     public int getMeasuredUPS() {
+        if (this.simulationScreen == null) {
+            return 0;
+        }
         return this.simulationScreen.getMeasuredUpdatesPerSecond();
     }
     

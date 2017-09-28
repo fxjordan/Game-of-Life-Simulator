@@ -13,6 +13,7 @@ import de.fjobilabs.gameoflife.desktop.gui.ControlPanel;
 import de.fjobilabs.gameoflife.desktop.gui.SimulationPanel;
 import de.fjobilabs.gameoflife.desktop.gui.SimulatorMenuBar;
 import de.fjobilabs.gameoflife.desktop.gui.actions.ActionManager;
+import de.fjobilabs.gameoflife.desktop.gui.actions.control.ChangeUPSAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.PauseSimulationAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.StartSimulationAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.StepBackwardAction;
@@ -70,6 +71,7 @@ public class SimulatorFrame extends JFrame {
         this.actionManager.registerAction(new PauseSimulationAction(this.actionManager, this.simulator));
         this.actionManager.registerAction(new StepForwardAction(this.actionManager, this.simulator));
         this.actionManager.registerAction(new StepBackwardAction(this.actionManager, this.simulator));
+        this.actionManager.registerAction(new ChangeUPSAction(this.actionManager, this.simulator));
     }
     
     private void initLayout() {
@@ -78,7 +80,7 @@ public class SimulatorFrame extends JFrame {
         
         this.simulationRendererPanel = new SimulationPanel(this.simulator);
         
-        JPanel controlPanel = new ControlPanel(this.actionManager);
+        JPanel controlPanel = new ControlPanel(this.simulator, this.actionManager);
         controlPanel.setBorder(BorderFactory.createTitledBorder("Simulation Control"));
         
         GroupLayout groupLayout = new GroupLayout(getContentPane());

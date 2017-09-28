@@ -22,7 +22,7 @@ public class SimulationPanel extends JPanel {
     
     public SimulationPanel(Simulator simulator) {
         this.rendererPanel = new SimulationRendererPanel(simulator);
-        this.rendererInfoPanel = new RendererInfoPanel(this.rendererPanel);
+        this.rendererInfoPanel = new RendererInfoPanel(simulator, this.rendererPanel);
         setBorder(BorderFactory.createTitledBorder("Simulation Renderer"));
         
         initLayout();
