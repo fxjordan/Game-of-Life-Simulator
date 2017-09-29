@@ -1,6 +1,8 @@
 package de.fjobilabs.gameoflife.desktop;
 
 import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -44,7 +46,7 @@ public class SimulatorFrame extends JFrame {
         setSize(1200, 750);
         setLocationRelativeTo(null);
         setMinimumSize(new Dimension(1000, 500));
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         
         this.simulator = new Simulator();
         
@@ -53,6 +55,8 @@ public class SimulatorFrame extends JFrame {
         
         initLayout();
         setJMenuBar(new SimulatorMenuBar(this.actionManager).getMenuBar());
+        
+        addWindowListener(new CloseListener());
     }
     
     private void registerActions() {
@@ -110,5 +114,22 @@ public class SimulatorFrame extends JFrame {
     public void dispose() {
         this.simulationRendererPanel.dispose();
         super.dispose();
+    }
+    
+    /**
+     * {@code WindowListener} that invokes the {@link ExitAction} when the
+     * window is closing.
+     * 
+     * @author Felix Jordan
+     * @version 1.0
+     * @since 29.09.2017 - 21:44:02
+     */
+    private class CloseListener extends WindowAdapter {
+        
+        @Override
+        public void windowClosing(WindowEvent e) {
+            // TODO BAD CODE. Do not invoke actions this way!
+            actionManager.getAction(ExitAction.ACTION_COMMAND).actionPerformed(null);
+        }
     }
 }

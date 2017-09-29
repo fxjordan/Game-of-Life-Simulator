@@ -25,6 +25,7 @@ public class ExitAction extends AbstractFileMenuAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!this.simulator.hasSimulation()) {
+            this.simulatorFrame.dispose();
             return;
         }
         pauseSimulation();
