@@ -9,9 +9,11 @@ public class SimulationConfiguration {
     
     public static final int DEFAULT_WORLD_WIDTH = 100;
     public static final int DEFAULT_WORLD_HEIGHT = 100;
+    public static final int DEFAULT_UPS = 10;
     
     private int worldWidth;
     private int worldHeight;
+    private int ups;
     // TODO World type property
     // TODO Simulation type property
     // TODO Simulation properties (rule set)
@@ -19,6 +21,7 @@ public class SimulationConfiguration {
     public SimulationConfiguration() {
         this.worldWidth = DEFAULT_WORLD_WIDTH;
         this.worldHeight = DEFAULT_WORLD_HEIGHT;
+        this.ups = DEFAULT_UPS;
     }
     
     public SimulationConfiguration(int worldWidth, int worldHeight) {
@@ -40,5 +43,13 @@ public class SimulationConfiguration {
     
     public void setWorldHeight(int worldHeight) {
         this.worldHeight = worldHeight;
+    }
+    
+    public int getUps() {
+        return ups;
+    }
+    
+    public void setUps(int ups) {
+        this.ups = ups;
     }
 }

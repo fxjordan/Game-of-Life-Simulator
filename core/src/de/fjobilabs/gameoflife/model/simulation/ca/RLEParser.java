@@ -12,7 +12,6 @@ import com.badlogic.gdx.utils.Logger;
 
 import de.fjobilabs.gameoflife.model.Cell;
 import de.fjobilabs.gameoflife.model.simulation.ca.RLEPattern.Token;
-import de.fjobilabs.gameoflife.model.simulation.ca.rules.GameOfLifeRuleSet;
 import de.fjobilabs.libgdx.util.LoggerFactory;
 
 /**

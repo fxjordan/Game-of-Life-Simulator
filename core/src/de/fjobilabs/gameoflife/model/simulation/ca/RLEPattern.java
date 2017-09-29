@@ -43,15 +43,19 @@ public class RLEPattern implements Pattern {
     @Override
     public void apply(World world, int x, int y) {
         int currentY = y;
-        for (int i=0; i<this.height; i++) {
+        for (int i = 0; i < this.height; i++) {
             applyTokenRow(world, this.tokens[i], x, currentY);
             currentY--;
         }
     }
     
+    Token[][] getTokens() {
+        return this.tokens;
+    }
+    
     private void applyTokenRow(World world, Token[] tokens, int startX, int startY) {
         int currentX = startX;
-        for (int i=0; i<tokens.length; i++) {
+        for (int i = 0; i < tokens.length; i++) {
             Token token = tokens[i];
             applyToken(world, token, currentX, startY);
             currentX += token.getRunCount();
@@ -61,7 +65,7 @@ public class RLEPattern implements Pattern {
     private void applyToken(World world, Token token, int startX, int startY) {
         int runCount = token.getRunCount();
         int cellState = token.getCellState();
-        for (int i=0; i<runCount; i++) {
+        for (int i = 0; i < runCount; i++) {
             int x = startX + i;
             world.setCellState(x, startY, cellState);
         }
@@ -122,6 +126,20 @@ public class RLEPattern implements Pattern {
             if (runCount < 0) {
                 throw new IllegalArgumentException("Invalid runCount: " + runCount + "(must be >= 0)");
             }
+        }
+        
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            if (this.runCount > 1) {
+                builder.append(this.runCount);
+            }
+            if (this.cellState == Cell.ALIVE) {
+                builder.append('o');
+            } else {
+                builder.append('b');
+            }
+            return builder.toString();
         }
     }
 }

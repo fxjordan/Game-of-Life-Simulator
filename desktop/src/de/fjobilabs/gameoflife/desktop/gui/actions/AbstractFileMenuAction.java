@@ -1,8 +1,10 @@
 package de.fjobilabs.gameoflife.desktop.gui.actions;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.slf4j.Logger;
@@ -78,8 +80,11 @@ public abstract class AbstractFileMenuAction extends AbstractSimulationAction {
         try {
             this.simulator.saveSimulation(file);
             return true;
-        } catch (Exception e) {
-            logger.error("Exception while saving simulation to file", e);
+        } catch (IOException e) {
+            logger.error("Exception while saving simulation to file :" + file, e);
+            JOptionPane.showMessageDialog(this.simulatorFrame,
+                    "Error when saving simulation to file '" + file + "'", "Save error",
+                    JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }

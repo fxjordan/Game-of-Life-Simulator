@@ -1,6 +1,11 @@
 package de.fjobilabs.gameoflife.model;
 
 /**
+ * A {@code Simulation} takes a {@link World} and updates the worlds cells for
+ * every simulation update. On this abstraction level there is no detailed
+ * definition on how these updates should be calculated or which cells are
+ * affected by an update.
+ * 
  * @author Felix Jordan
  * @version 1.0
  * @since 17.09.2017 - 19:44:06

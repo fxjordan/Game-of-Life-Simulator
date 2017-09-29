@@ -2,6 +2,7 @@ package de.fjobilabs.gameoflife.desktop.gui;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -43,6 +44,11 @@ public class ControlPanel extends JPanel {
     }
     
     private void initLayout(Simulator simulator) {
+        /*
+         * TODO Make image paths independent from environment, the paths should
+         * work in eclipse and if the application is executed as a standalone
+         * JAR.
+         */
         JButton startButton = createActionButton(StartSimulationAction.ACTION_COMMAND, "images/start.png");
         JButton pauseButton = createActionButton(PauseSimulationAction.ACTION_COMMAND, "images/pause.png");
         JButton stepForwardButton = createActionButton(StepForwardAction.ACTION_COMMAND,
@@ -97,9 +103,13 @@ public class ControlPanel extends JPanel {
         JButton button = new JButton(this.actionManager.getAction(actionCommand));
         // We need to override the properties, set by the action
         button.setText(null);
-        Image image = Toolkit.getDefaultToolkit().getImage(iconImagePath);
+        Image image = Toolkit.getDefaultToolkit().getImage(getResource(iconImagePath));
         image = image.getScaledInstance(ICON_WIDTH, ICON_HEIGHT, Image.SCALE_SMOOTH);
         button.setIcon(new ImageIcon(image));
         return button;
+    }
+    
+    private URL getResource(String name) {
+        return ControlPanel.class.getClassLoader().getResource(name);
     }
 }

@@ -2,6 +2,12 @@ package de.fjobilabs.gameoflife.desktop.gui.actions.file;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.fjobilabs.gameoflife.desktop.SimulatorFrame;
 import de.fjobilabs.gameoflife.desktop.gui.actions.AbstractFileMenuAction;
@@ -17,6 +23,8 @@ public class SaveSimulationAsAction extends AbstractFileMenuAction {
     
     private static final long serialVersionUID = -6195429605089602289L;
     
+    private static final Logger logger = LoggerFactory.getLogger(SaveSimulationAsAction.class);
+    
     public static final String ACTION_COMMAND = "save_simulation_as";
     
     public SaveSimulationAsAction(ActionManager actionManager, SimulatorFrame simulatorFrame,
@@ -26,7 +34,7 @@ public class SaveSimulationAsAction extends AbstractFileMenuAction {
     }
     
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent event) {
         if (!this.simulator.hasSimulation() || !this.simulator.hasSimulationChanged()) {
             return;
         }
@@ -34,6 +42,13 @@ public class SaveSimulationAsAction extends AbstractFileMenuAction {
         if (file == null) {
             return;
         }
-        this.simulator.saveSimulation(file);
+        try {
+            this.simulator.saveSimulation(file);
+        } catch (IOException e) {
+            logger.error("Exception while saving simulation to file :" + file, e);
+            JOptionPane.showMessageDialog(this.simulatorFrame,
+                    "Error when saving simulation to file '" + file + "'", "Save error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

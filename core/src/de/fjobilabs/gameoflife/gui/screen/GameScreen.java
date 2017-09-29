@@ -30,7 +30,7 @@ import de.fjobilabs.libgdx.util.LoggerFactory;
 @Deprecated
 public class GameScreen extends ScreenAdapter {
     
-    private static final int TICKS_PER_SECOND = 10;
+    private static final int TICKS_PER_SECOND = 200;
     private static final float TICK = 1.0f / (float) TICKS_PER_SECOND;
     private static final float MAX_UPDATES_PER_FRAME = 1;
     
@@ -53,7 +53,7 @@ public class GameScreen extends ScreenAdapter {
         // Test code:
         // World world = new FixedSizeBorderedWorld(10, 10);
         
-        World world = new FixedSizeTorusWorld(50, 50);
+        World world = new FixedSizeTorusWorld(1800, 1700);
         
 //        Pattern pattern = new ArrayPattern(3, 3,
 //                new int[][] {
@@ -80,7 +80,7 @@ public class GameScreen extends ScreenAdapter {
         RuleSet ruleSet = new StandardGameOfLifeRuleSet();
         
         this.simulation = new CellularAutomatonSimulation(world, ruleSet);
-        // this.simulation = new LangtonsAntSimulation(world);
+//         this.simulation = new LangtonsAntSimulation(world);
         
         this.worldRenderer = new WorldRenderer(assetManager);
         

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import com.badlogic.gdx.utils.Logger;
 
 import de.fjobilabs.gameoflife.model.AbstractSimulation;
+import de.fjobilabs.gameoflife.model.Cell;
 import de.fjobilabs.gameoflife.model.CellContext;
 import de.fjobilabs.gameoflife.model.SimulationException;
 import de.fjobilabs.gameoflife.model.World;
@@ -29,12 +30,37 @@ public class CellularAutomatonSimulation extends AbstractSimulation {
     private static final Logger logger = LoggerFactory.getLogger(CellularAutomatonSimulation.class,
             Logger.DEBUG);
     
+    /** The rule set of this simulation. */
     private final RuleSet ruleSet;
+    
+    /** Buffer for the next generation cell states. */
     private int[][] newCellStatesBuffer;
+    
+    /** Buffer for each rules result. */
     private int[] ruleResultsBuffer;
     
+    /**
+     * Creates a new {@code CellularAutomatonSimulation} for a given world with
+     * a specific rule set.
+     * 
+     * @param world The world on which the simulation should operate.
+     * @param ruleSet The rule set for this simulation.
+     * @param generation The current generation number.
+     */
     public CellularAutomatonSimulation(World world, RuleSet ruleSet) {
-        super(world);
+        this(world, ruleSet, 0);
+    }
+    
+    /**
+     * Creates a new {@code CellularAutomatonSimulation} for a given world with
+     * a specific rule set.
+     * 
+     * @param world The world on which the simulation should operate.
+     * @param ruleSet The rule set for this simulation.
+     * @param generation The current generation number.
+     */
+    public CellularAutomatonSimulation(World world, RuleSet ruleSet, int generation) {
+        super(world, generation);
         this.ruleSet = ruleSet;
         /*
          * TODO Implement as own class, so that buffer can grow (Necessary for
@@ -45,7 +71,7 @@ public class CellularAutomatonSimulation extends AbstractSimulation {
     }
     
     /**
-     * Apples the rule set of the simulation to each cell in the world.
+     * Applies the {@link RuleSet} of the simulation to each cell in the world.
      */
     @Override
     protected void doUpdate() {
@@ -70,6 +96,14 @@ public class CellularAutomatonSimulation extends AbstractSimulation {
         }
     }
     
+    /**
+     * Calculates the new cell state of the cell at the given position.
+     * 
+     * @param x The cell position on the x-axis.
+     * @param y The cell position on the y-axis.
+     * @return The cell state for the next generation (either {@link Cell#ALIVE}
+     *         or {@link Cell#DEAD}).
+     */
     private int calcNewCellState(int x, int y) {
         CellContext cellContext = this.world.getCellContext(x, y);
         Rule[] rules = this.ruleSet.getRules();

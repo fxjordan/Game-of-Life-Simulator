@@ -7,9 +7,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class DesktopLauncher {
     
     public static void main(String[] arg) {
-        // LwjglApplicationConfiguration config = new
-        // LwjglApplicationConfiguration();
-        // new LwjglApplication(new GameOfLifeGame(), config);
+//         LwjglApplicationConfiguration config = new
+//         LwjglApplicationConfiguration();
+//         new LwjglApplication(new GameOfLifeGame(), config);
         // new LwjglApplication(new HighPerformanceCellRendererTest(), config);
         runGameOfLifeFrame();
     }

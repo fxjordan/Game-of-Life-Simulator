@@ -23,8 +23,9 @@ public abstract class AbstractSimulation implements Simulation {
     private boolean running;
     private int generation;
     
-    public AbstractSimulation(World world) {
+    public AbstractSimulation(World world, int generation) {
         this.world = world;
+        this.generation = generation;
     }
     
     @Override

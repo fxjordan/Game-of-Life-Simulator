@@ -1,11 +1,19 @@
 package de.fjobilabs.gameoflife.desktop.simulator;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.fjobilabs.gameoflife.SimulatorApplication;
+import de.fjobilabs.gameoflife.desktop.simulator.io.SimulationModel;
+import de.fjobilabs.gameoflife.desktop.simulator.io.SimulationWriter;
+import de.fjobilabs.gameoflife.desktop.simulator.io.WorldContentModel;
 import de.fjobilabs.gameoflife.model.Simulation;
 import de.fjobilabs.gameoflife.model.World;
 import de.fjobilabs.gameoflife.model.simulation.CellularAutomatonSimulation;
@@ -29,21 +37,78 @@ public class Simulator {
     private Simulation currentSimulation;
     private SimulationState currentSimulationState;
     private File currentSimulationFile;
-    private int ups;
+    
+    private SimulationModel currentSimulationModel;
+    
+    private ObjectMapper objectMapper;
+    private WorldContentLoader worldContentLoader;
+    private SimulationWriter simulationWriter;
     
     public Simulator() {
         this.simulatorApplication = new SimulatorApplication();
+        this.objectMapper = new ObjectMapper();
+        this.worldContentLoader = new WorldContentLoader();
+        this.simulationWriter = new SimulationWriter();
     }
     
-    public void createSimulation(SimulationConfiguration config) {
-        logger.info("Creating new simulation from config: {}", config);
-        World world = new FixedSizeTorusWorld(config.getWorldWidth(), config.getWorldHeight());
-        RuleSet ruleSet = new StandardGameOfLifeRuleSet();
-        this.currentSimulation = new CellularAutomatonSimulation(world, ruleSet);
+    
+    
+    /**
+     * Loads a new simulation from a {@link SimulationModel}. This model holds
+     * all necessary information about the simulation, the configuration and the
+     * world.
+     * 
+     * @param simulationModel
+     * @throws SimulatorException
+     */
+    /*
+     * TODO This method should be transactional.
+     */
+    private void loadSimulation(SimulationModel simulationModel) throws SimulatorException {
+        this.currentSimulationModel = simulationModel;
+        SimulationConfiguration config = simulationModel.getConfig();
+        this.currentSimulation = createSimulation(config, simulationModel.getGeneration());
         this.simulatorApplication.setSimulation(this.currentSimulation);
-        this.simulatorApplication.setEditMode(true);
-        setUPS(DEFAULT_UPS);
-        this.currentSimulationState = SimulationState.Created;
+        configure(simulationModel);
+        WorldContentModel worldContent = simulationModel.getWorldContent();
+        if (worldContent != null) {
+            try {
+                this.worldContentLoader.loadContent(this.currentSimulation.getWorld(), worldContent);
+            } catch (WorldContentLoaderException e) {
+                throw new SimulatorException("Failed to load simulation", e);
+            }
+        }
+    }
+    
+    private Simulation createSimulation(SimulationConfiguration config, int generation) {
+        // TODO Support variable simulations and rule sets.
+        World world = createWorld(config);
+        RuleSet ruleSet = new StandardGameOfLifeRuleSet();
+        return new CellularAutomatonSimulation(world, ruleSet, generation);
+    }
+    
+    private World createWorld(SimulationConfiguration config) {
+        // TODO Support other world types.
+        return new FixedSizeTorusWorld(config.getWorldWidth(), config.getWorldHeight());
+    }
+    
+    private void configure(SimulationModel simulationModel) {
+        if (simulationModel.getGeneration() > 0) {
+            this.simulatorApplication.setEditMode(false);
+            this.currentSimulationState = SimulationState.Paused;
+        } else {
+            this.simulatorApplication.setEditMode(true);
+            this.currentSimulationState = SimulationState.Created;
+        }
+        applyConfiguration(simulationModel.getConfig());
+    }
+    
+    private void applyConfiguration(SimulationConfiguration config) {
+        /*
+         * TODO UPS are not correctly changed in GUI after simulation was
+         * loaded.
+         */
+        setUPS(config.getUps());
     }
     
     SimulatorApplication getSimulatorApplication() {
@@ -75,12 +140,12 @@ public class Simulator {
         if (ups < 0) {
             throw new IllegalArgumentException("UPS must be >= 0");
         }
-        this.ups = ups;
+        this.currentSimulationModel.getConfig().setUps(ups);
         this.simulatorApplication.setUps(ups);
     }
     
     public int getUPS() {
-        return ups;
+        return currentSimulationModel.getConfig().getUps();
     }
     
     public int getMeasuredUPS() {
@@ -133,14 +198,30 @@ public class Simulator {
         }
     }
     
-    public void saveSimulation(File file) {
-        logger.info("Saving simulation to file: '{}'...", file);
-        // TODO Save simulation to file
+    public void newSimulation(SimulationConfiguration config) throws SimulatorException {
+        logger.info("Creating new simulation from config: {}", config);
+        SimulationModel model = new SimulationModel();
+        model.setConfig(config);
+        model.setGeneration(0);
+        loadSimulation(model);
+        this.currentSimulationFile = null;
+        logger.info("Simulation created successfully");
     }
     
-    public void openSimulation(File file) {
+    /**
+     * Loads a simulation from the given file.
+     * 
+     * @param file The file where the simulation should be loaded from.
+     * 
+     * @throws SimulatorException When the simulator cannot create a simulation
+     *             from the loaded model.
+     * @throws IOException When the simulation model cannot be loaded from file.
+     */
+    public void openSimulation(File file) throws SimulatorException, IOException {
         logger.info("Loading simulation from file: '{}'...", file);
-        // TODO Open simulation from file
+        SimulationModel simulationModel = this.objectMapper.readValue(file, SimulationModel.class);
+        loadSimulation(simulationModel);
+        this.currentSimulationFile = file;
     }
     
     public void closeSimulation() {
@@ -148,6 +229,27 @@ public class Simulator {
         this.simulatorApplication.setSimulation(null);
         this.currentSimulation = null;
         this.currentSimulationState = null;
+        this.currentSimulationFile = null;
+    }
+    
+    public void saveSimulation(File file) throws IOException {
+        logger.info("Saving simulation to file: '{}'...", file);
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            this.simulationWriter.writeSimulation(out, this.currentSimulationModel.getConfig(),
+                    this.currentSimulation);
+            out.flush();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    logger.warn("Failed to close output stream after saving to file: " + file, e);
+                }
+            }
+        }
+        logger.info("Simulation saved successfully to file '{}'", file);
     }
     
     /**
