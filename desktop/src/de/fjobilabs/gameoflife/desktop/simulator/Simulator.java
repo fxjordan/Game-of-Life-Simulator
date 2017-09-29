@@ -17,7 +17,9 @@ import de.fjobilabs.gameoflife.desktop.simulator.io.WorldContentModel;
 import de.fjobilabs.gameoflife.model.Simulation;
 import de.fjobilabs.gameoflife.model.World;
 import de.fjobilabs.gameoflife.model.simulation.CellularAutomatonSimulation;
+import de.fjobilabs.gameoflife.model.simulation.LangtonsAntSimulation;
 import de.fjobilabs.gameoflife.model.simulation.ca.RuleSet;
+import de.fjobilabs.gameoflife.model.simulation.ca.rules.GameOfLifeRuleSet;
 import de.fjobilabs.gameoflife.model.simulation.ca.rules.StandardGameOfLifeRuleSet;
 import de.fjobilabs.gameoflife.model.worlds.FixedSizeBorderedWorld;
 import de.fjobilabs.gameoflife.model.worlds.FixedSizeTorusWorld;
@@ -79,23 +81,55 @@ public class Simulator {
         }
     }
     
-    private Simulation createSimulation(SimulationConfiguration config, int generation) {
-        // TODO Support variable simulations and rule sets.
+    private Simulation createSimulation(SimulationConfiguration config, int generation)
+            throws SimulatorException {
+        // TODO Support external simulations
         World world = createWorld(config);
-        RuleSet ruleSet = new StandardGameOfLifeRuleSet();
+        String simulationType = config.getSimulationType();
+        switch (simulationType) {
+        case SimulationConfiguration.CELLULAR_AUTOMATON_SIMULATION:
+            return createCellularAutomatonSimulation(world, config, generation);
+        case SimulationConfiguration.LANGTONS_ANT_SIMULATION:
+            return new LangtonsAntSimulation(world, generation);
+        default:
+            throw new SimulatorException("Unsupported simulation type");
+        }
+    }
+    
+    private Simulation createCellularAutomatonSimulation(World world, SimulationConfiguration config,
+            int generation) throws SimulatorException {
+        RuleSet ruleSet = createRuleSet(config);
         return new CellularAutomatonSimulation(world, ruleSet, generation);
     }
     
-    private World createWorld(SimulationConfiguration config) {
+    private RuleSet createRuleSet(SimulationConfiguration config) throws SimulatorException {
+        // TODO Support external rule sets
+        String ruleSet = config.getRuleSet();
+        switch (ruleSet) {
+        case SimulationConfiguration.STANDARD_GAME_OF_LIFE_RULE_SET:
+            return new StandardGameOfLifeRuleSet();
+        case SimulationConfiguration.LIFE_LIKE_RULE_SET:
+            String ruleString = config.getRuleString();
+            try {
+                return GameOfLifeRuleSet.parse(ruleString);
+            } catch (IllegalArgumentException e) {
+                throw new SimulatorException("Invalid rule string: " + ruleString);
+            }
+        default:
+            throw new SimulatorException("Unsupported rule set: " + ruleSet);
+        }
+    }
+    
+    private World createWorld(SimulationConfiguration config) throws SimulatorException {
         // TODO Support external world types.
         String worldType = config.getWorldType();
         switch (worldType) {
-        case "fixed-size-torus-world":
+        case SimulationConfiguration.TORUS_WORLD:
             return new FixedSizeTorusWorld(config.getWorldWidth(), config.getWorldHeight());
-        case "fixed-size-bordered-world":
+        case SimulationConfiguration.BORDERED_WORLD:
             return new FixedSizeBorderedWorld(config.getWorldWidth(), config.getWorldHeight());
         default:
-            throw new IllegalArgumentException("Unsupported world type: " + config);
+            throw new SimulatorException("Unsupported world type: " + config);
         }
     }
     
@@ -114,6 +148,9 @@ public class Simulator {
         /*
          * TODO UPS are not correctly changed in GUI after simulation was
          * loaded.
+         */
+        /*
+         * TODO Remove ups from configuration.
          */
         setUPS(config.getUps());
     }

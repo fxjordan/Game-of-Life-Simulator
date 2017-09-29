@@ -16,8 +16,8 @@ public class LangtonsAntSimulation extends AbstractSimulation {
     private Ant ant;
     private boolean endOfWorld;
     
-    public LangtonsAntSimulation(World world) {
-        super(world, 0);
+    public LangtonsAntSimulation(World world, int generation) {
+        super(world, generation);
         this.ant = new Ant(this.world.getCenterX(), this.world.getCenterY(), Direction.DOWN);
     }
     
