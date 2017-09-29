@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -42,10 +43,12 @@ public class NewSimulationDialog extends JDialog implements ActionListener {
     private JSpinner worldHeightSpinner;
     private SimulationConfiguration result;
     
+    private JComboBox<WorldTypeComboItem> comboBox;
+    
     public NewSimulationDialog() {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setTitle("New Simulation");
-        setSize(500, 300);
+        setSize(500, 520);
         setModal(true);
         
         SpinnerModel worldWidthSpinnerModel = new SpinnerNumberModel(
@@ -82,6 +85,7 @@ public class NewSimulationDialog extends JDialog implements ActionListener {
     
     private SimulationConfiguration createSimulationConfiguration() {
         SimulationConfiguration config = new SimulationConfiguration();
+        config.setWorldType(((WorldTypeComboItem) this.comboBox.getSelectedItem()).getWorldType());
         config.setWorldWidth((int) this.worldWidthSpinner.getValue());
         config.setWorldHeight((int) this.worldHeightSpinner.getValue());
         return config;
@@ -105,33 +109,47 @@ public class NewSimulationDialog extends JDialog implements ActionListener {
         cancelButton.setActionCommand(CANCEL_ACTION);
         cancelButton.addActionListener(this);
         
+        JLabel worldTypeLabel = new JLabel("World type:");
+        this.comboBox = new JComboBox<>(createWorldTypeItems());
+        
         GroupLayout groupLayout = new GroupLayout(getContentPane());
         groupLayout
                 .setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
                         .addComponent(headerPanel, GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
                         .addComponent(separator, GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
-                        .addGroup(groupLayout.createSequentialGroup().addContainerGap()
-                                .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                        .addComponent(worldWidthLabel).addComponent(worldHeightLabel))
-                                .addGap(18)
-                                .addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
-                                        .addComponent(worldWidthSpinner).addComponent(worldHeightSpinner,
-                                                GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
-                                .addContainerGap(281, GroupLayout.PREFERRED_SIZE))
                         .addGroup(groupLayout.createSequentialGroup().addContainerGap(243, Short.MAX_VALUE)
                                 .addComponent(finishButton, GroupLayout.PREFERRED_SIZE, 110,
                                         GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, 110,
+                                .addComponent(
+                                        cancelButton, GroupLayout.PREFERRED_SIZE, 110,
                                         GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())
-                        .addComponent(separator1, GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE));
+                        .addComponent(separator1, GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
+                        .addGroup(groupLayout.createSequentialGroup().addContainerGap().addGroup(groupLayout
+                                .createParallelGroup(Alignment.TRAILING)
+                                .addGroup(Alignment.LEADING,
+                                        groupLayout.createSequentialGroup().addComponent(worldTypeLabel)
+                                                .addGap(29).addComponent(comboBox, GroupLayout.PREFERRED_SIZE,
+                                                        239, GroupLayout.PREFERRED_SIZE))
+                                .addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+                                        .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+                                                .addComponent(worldWidthLabel).addComponent(worldHeightLabel))
+                                        .addGap(18)
+                                        .addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+                                                .addComponent(worldWidthSpinner)
+                                                .addComponent(worldHeightSpinner))))
+                                .addContainerGap(135, Short.MAX_VALUE)));
         groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
                 .createSequentialGroup()
                 .addComponent(headerPanel, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE)
                 .addComponent(separator, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                         GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(worldTypeLabel)
+                        .addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                                GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(worldWidthLabel)
                         .addComponent(worldWidthSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                                 GroupLayout.PREFERRED_SIZE))
@@ -140,7 +158,7 @@ public class NewSimulationDialog extends JDialog implements ActionListener {
                         .addComponent(worldHeightSpinner, GroupLayout.PREFERRED_SIZE,
                                 GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(worldHeightLabel))
-                .addPreferredGap(ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addPreferredGap(ComponentPlacement.RELATED, 252, Short.MAX_VALUE)
                 .addComponent(separator1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                         GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.UNRELATED)
@@ -172,5 +190,11 @@ public class NewSimulationDialog extends JDialog implements ActionListener {
     private void disableInvalidSpinnerInput(JSpinner spinner) {
         JFormattedTextField txt = ((JSpinner.NumberEditor) spinner.getEditor()).getTextField();
         ((NumberFormatter) txt.getFormatter()).setAllowsInvalid(false);
+    }
+    
+    private WorldTypeComboItem[] createWorldTypeItems() {
+        return new WorldTypeComboItem[] {
+                new WorldTypeComboItem("fixed-size-torus-world", "FixedSizeTorusWorld"),
+                new WorldTypeComboItem("fixed-size-bordered-world", "FixedSizeBorderedWorld")};
     }
 }

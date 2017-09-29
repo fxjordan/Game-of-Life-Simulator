@@ -19,6 +19,7 @@ import de.fjobilabs.gameoflife.model.World;
 import de.fjobilabs.gameoflife.model.simulation.CellularAutomatonSimulation;
 import de.fjobilabs.gameoflife.model.simulation.ca.RuleSet;
 import de.fjobilabs.gameoflife.model.simulation.ca.rules.StandardGameOfLifeRuleSet;
+import de.fjobilabs.gameoflife.model.worlds.FixedSizeBorderedWorld;
 import de.fjobilabs.gameoflife.model.worlds.FixedSizeTorusWorld;
 
 /**
@@ -86,8 +87,16 @@ public class Simulator {
     }
     
     private World createWorld(SimulationConfiguration config) {
-        // TODO Support other world types.
-        return new FixedSizeTorusWorld(config.getWorldWidth(), config.getWorldHeight());
+        // TODO Support external world types.
+        String worldType = config.getWorldType();
+        switch (worldType) {
+        case "fixed-size-torus-world":
+            return new FixedSizeTorusWorld(config.getWorldWidth(), config.getWorldHeight());
+        case "fixed-size-bordered-world":
+            return new FixedSizeBorderedWorld(config.getWorldWidth(), config.getWorldHeight());
+        default:
+            throw new IllegalArgumentException("Unsupported world type: " + config);
+        }
     }
     
     private void configure(SimulationModel simulationModel) {

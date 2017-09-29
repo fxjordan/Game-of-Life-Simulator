@@ -7,10 +7,12 @@ package de.fjobilabs.gameoflife.desktop.simulator;
  */
 public class SimulationConfiguration {
     
+    public static final String DEFAULT_WORLD_TYPE = "fixed-size-torus-world";
     public static final int DEFAULT_WORLD_WIDTH = 100;
     public static final int DEFAULT_WORLD_HEIGHT = 100;
     public static final int DEFAULT_UPS = 10;
     
+    private String worldType;
     private int worldWidth;
     private int worldHeight;
     private int ups;
@@ -19,14 +21,24 @@ public class SimulationConfiguration {
     // TODO Simulation properties (rule set)
     
     public SimulationConfiguration() {
+        this.worldType = DEFAULT_WORLD_TYPE;
         this.worldWidth = DEFAULT_WORLD_WIDTH;
         this.worldHeight = DEFAULT_WORLD_HEIGHT;
         this.ups = DEFAULT_UPS;
     }
     
     public SimulationConfiguration(int worldWidth, int worldHeight) {
+        super();
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
+    }
+    
+    public String getWorldType() {
+        return worldType;
+    }
+    
+    public void setWorldType(String worldType) {
+        this.worldType = worldType;
     }
     
     public int getWorldWidth() {
