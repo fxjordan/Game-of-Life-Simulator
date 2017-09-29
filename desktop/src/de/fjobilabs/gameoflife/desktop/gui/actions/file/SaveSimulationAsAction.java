@@ -35,7 +35,11 @@ public class SaveSimulationAsAction extends AbstractFileMenuAction {
     
     @Override
     public void actionPerformed(ActionEvent event) {
-        if (!this.simulator.hasSimulation() || !this.simulator.hasSimulationChanged()) {
+        /*
+         * Don't check if the simulation changed here! The user wants to save the
+         * simulation in a new file.
+         */
+        if (!this.simulator.hasSimulation()) {
             return;
         }
         pauseSimulation();

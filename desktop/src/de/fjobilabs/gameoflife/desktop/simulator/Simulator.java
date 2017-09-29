@@ -40,8 +40,8 @@ public class Simulator {
     private Simulation currentSimulation;
     private SimulationState currentSimulationState;
     private File currentSimulationFile;
-    
     private SimulationModel currentSimulationModel;
+    private int lastSavedGeneration;
     
     private ObjectMapper objectMapper;
     private WorldContentLoader worldContentLoader;
@@ -165,11 +165,13 @@ public class Simulator {
     
     public boolean hasSimulationChanged() {
         /*
-         * TODO Check whether simulation has really changed. Simulation has
-         * changed if either the simulation has calculated a newer generation or
-         * any simulation property changed.
+         * A simulation has changed if either the simulation has calculated a
+         * newer generation or any simulation property changed.
          */
-        return true;
+        if (!hasSimulation()) {
+            return false;
+        }
+        return this.lastSavedGeneration < this.currentSimulation.getGeneration();
     }
     
     public SimulationState getCurrentSimulationState() {
@@ -228,7 +230,9 @@ public class Simulator {
     
     public void stepBackward() {
         /*
-         * TODO Implement reverse simulation!
+         * TODO Implement reverse simulation! Its not possible to calculate the
+         * last generation from the current generation, so we have to store some
+         * generations, so that we can always calculate forward.
          */
     }
     
@@ -249,6 +253,7 @@ public class Simulator {
         model.setGeneration(0);
         loadSimulation(model);
         this.currentSimulationFile = null;
+        this.lastSavedGeneration = -1;
         logger.info("Simulation created successfully");
     }
     
@@ -274,6 +279,7 @@ public class Simulator {
         this.currentSimulation = null;
         this.currentSimulationState = null;
         this.currentSimulationFile = null;
+        this.lastSavedGeneration = -1;
     }
     
     public void saveSimulation(File file) throws IOException {
@@ -293,6 +299,7 @@ public class Simulator {
                 }
             }
         }
+        this.lastSavedGeneration = this.currentSimulation.getGeneration();
         logger.info("Simulation saved successfully to file '{}'", file);
     }
     
