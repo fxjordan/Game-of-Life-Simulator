@@ -16,6 +16,10 @@ import de.fjobilabs.gameoflife.model.Simulation;
  */
 public class SimulatorApplication extends Game {
     
+    public static final int TEXTURE_CELL_RENDERER = 0;
+    public static final int SHAPE_CELL_RENDERER = 1;
+    public static final int HIGH_PERFORMANCE_CELL_RENDERER = 2;
+    
     private GameOfLifeAssetManager assetManager;
     private IdleScreen idleScreen;
     private SimulationScreen simulationScreen;
@@ -58,6 +62,10 @@ public class SimulatorApplication extends Game {
             changeToSimulation(simulation);
         }
         
+    }
+    
+    public void setCellRenderer(int rendererType) {
+        this.simulationScreen.setCellRenderer(rendererType);
     }
     
     public void setEditMode(boolean enabled) {

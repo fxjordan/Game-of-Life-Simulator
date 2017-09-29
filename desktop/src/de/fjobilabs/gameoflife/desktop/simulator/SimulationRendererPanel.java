@@ -28,6 +28,10 @@ public class SimulationRendererPanel extends JPanel {
         add(this.lwjglCanvas.getCanvas());
     }
     
+    public void setCellRenderer(int rendererType) {
+        this.simulatorApplication.setCellRenderer(rendererType);
+    }
+    
     public int getFPS() {
         return this.simulatorApplication.getFPS();
     }

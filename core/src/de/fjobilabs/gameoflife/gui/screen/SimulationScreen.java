@@ -7,7 +7,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Logger;
 
 import de.fjobilabs.gameoflife.GameOfLifeAssetManager;
+import de.fjobilabs.gameoflife.SimulatorApplication;
+import de.fjobilabs.gameoflife.gui.HighPerformanceCellRenderer;
+import de.fjobilabs.gameoflife.gui.ShapeCellRenderer;
 import de.fjobilabs.gameoflife.gui.SimulationController;
+import de.fjobilabs.gameoflife.gui.TextureCellRenderer;
 import de.fjobilabs.gameoflife.gui.WorldRenderer;
 import de.fjobilabs.gameoflife.model.Simulation;
 import de.fjobilabs.gameoflife.model.World;
@@ -25,11 +29,16 @@ public class SimulationScreen extends ScreenAdapter {
     private static final int DEFAULT_UPDATES_PER_SECOND = 10;
     private static final int DEFAULT_MAX_UPDATES_PER_FRAME = 5;
     
+    private GameOfLifeAssetManager assetManager;
     private WorldRenderer worldRenderer;
     private SimulationController simulationController;
     private FPSLogger fpsLogger;
     private Simulation simulation;
     private float fixedStepTime;
+    
+    private TextureCellRenderer textureCellRenderer;
+    private ShapeCellRenderer shapeCellRenderer;
+    private HighPerformanceCellRenderer highPerformanceCellRenderer;
     
     private UPSCounter upsCounter;
     
@@ -38,7 +47,9 @@ public class SimulationScreen extends ScreenAdapter {
     private int maxUpdatesPerFrame;
     
     public SimulationScreen(GameOfLifeAssetManager assetManager) {
+        this.assetManager = assetManager;
         this.worldRenderer = new WorldRenderer(assetManager);
+        this.worldRenderer.setCellRenderer(getTextureCellRendererInstance());
         this.simulationController = new SimulationController(this.worldRenderer);
         this.fpsLogger = new FPSLogger();
         this.upsCounter = new UPSCounter();
@@ -102,6 +113,15 @@ public class SimulationScreen extends ScreenAdapter {
     @Override
     public void dispose() {
         this.worldRenderer.dispose();
+        if (this.textureCellRenderer != null) {
+            this.textureCellRenderer.dispose();
+        }
+        if (this.shapeCellRenderer != null) {
+            this.shapeCellRenderer.dispose();
+        }
+        if (this.highPerformanceCellRenderer != null) {
+            this.highPerformanceCellRenderer.dispose();
+        }
     }
     
     public SimulationController getSimulationController() {
@@ -116,6 +136,22 @@ public class SimulationScreen extends ScreenAdapter {
         }
         this.worldRenderer.setWorld(world);
         this.simulationController.setSimulation(simulation);
+    }
+    
+    public void setCellRenderer(int rendererType) {
+        switch (rendererType) {
+        case SimulatorApplication.TEXTURE_CELL_RENDERER:
+            this.worldRenderer.setCellRenderer(getTextureCellRendererInstance());
+            break;
+        case SimulatorApplication.SHAPE_CELL_RENDERER:
+            this.worldRenderer.setCellRenderer(getShapeCellRendererInstance());
+            break;
+        case SimulatorApplication.HIGH_PERFORMANCE_CELL_RENDERER:
+            this.worldRenderer.setCellRenderer(getHighPerformanceCellRendererInstance());
+            break;
+        default:
+            throw new IllegalArgumentException("Illegal cell renderer type: " + rendererType);
+        }
     }
     
     public void setUpdatesPerSecond(int updatesPerSecond) {
@@ -136,5 +172,26 @@ public class SimulationScreen extends ScreenAdapter {
     
     public void setMaxUpdatesPerFrame(int maxUpdatesPerFrame) {
         this.maxUpdatesPerFrame = maxUpdatesPerFrame;
+    }
+    
+    private TextureCellRenderer getTextureCellRendererInstance() {
+        if (this.textureCellRenderer == null) {
+            this.textureCellRenderer = new TextureCellRenderer(assetManager);
+        }
+        return this.textureCellRenderer;
+    }
+    
+    private ShapeCellRenderer getShapeCellRendererInstance() {
+        if (this.shapeCellRenderer == null) {
+            this.shapeCellRenderer = new ShapeCellRenderer();
+        }
+        return this.shapeCellRenderer;
+    }
+    
+    private HighPerformanceCellRenderer getHighPerformanceCellRendererInstance() {
+        if (this.highPerformanceCellRenderer == null) {
+            this.highPerformanceCellRenderer = new HighPerformanceCellRenderer();
+        }
+        return this.highPerformanceCellRenderer;
     }
 }

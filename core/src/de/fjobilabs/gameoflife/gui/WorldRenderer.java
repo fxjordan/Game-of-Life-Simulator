@@ -31,8 +31,6 @@ public class WorldRenderer {
     public WorldRenderer(GameOfLifeAssetManager assetManager) {
         this.camera = new OrthographicCamera();
         this.viewport = new FillViewport(50, 50, this.camera);
-//        this.cellRenderer = new HighPerformanceCellRenderer();
-        this.cellRenderer = new TextureCellRenderer(assetManager);
         this.enabled = true;
     }
     
@@ -70,6 +68,16 @@ public class WorldRenderer {
         this.camera.position.y = world.getCenterY();
         this.camera.update();
         this.cellRenderer.configure(world.getWidth(), world.getHeight());
+    }
+    
+    public void setCellRenderer(CellRenderer cellRenderer) {
+        if (this.cellRenderer != null) {
+            this.cellRenderer.hide();
+        }
+        this.cellRenderer = cellRenderer;
+        if (this.world != null) {
+            this.cellRenderer.configure(this.world.getWidth(), this.world.getHeight());
+        }
     }
     
     public Vector2 touchToWorld(Vector2 screenCoords) {
@@ -120,6 +128,7 @@ public class WorldRenderer {
     
     public void dispose() {
         logger.debug("Disposing World Renderer");
-        this.cellRenderer.dispose();
+        // Cell renderers are managed by SimulationScreen
+        // this.cellRenderer.dispose();
     }
 }

@@ -4,10 +4,8 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.utils.Logger;
 
 import de.fjobilabs.gameoflife.model.Cell;
-import de.fjobilabs.libgdx.util.LoggerFactory;
 
 /**
  * @author Felix Jordan
@@ -18,8 +16,6 @@ public class ShapeCellRenderer implements CellRenderer {
     
     private static final Color DEAD_CELL_COLOR = new Color(117f / 255f, 111f / 255f, 85f / 255f, 1f);
     private static final Color ALIVE_CELL_COLOR = new Color(255f / 255f, 216f / 255f, 0f / 255f, 1f);
-    
-    private static final Logger logger = LoggerFactory.getLogger(ShapeCellRenderer.class, Logger.DEBUG);
     
     private ShapeRenderer shapeRenderer;
     
@@ -43,7 +39,6 @@ public class ShapeCellRenderer implements CellRenderer {
     public void begin(Camera camera) {
         this.shapeRenderer.setProjectionMatrix(camera.combined);
         this.shapeRenderer.begin(ShapeType.Filled);
-//        this.shapeRenderer.setColor(Color.RED);
     }
     
     @Override

@@ -42,8 +42,8 @@ public class SimulationPanel extends JPanel {
         groupLayout.setVerticalGroup(
             groupLayout.createParallelGroup(Alignment.LEADING)
                 .addGroup(groupLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(rendererInfoPanel, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+//                    .addContainerGap()
+                    .addComponent(rendererInfoPanel, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
                     .addGap(18)
                     .addComponent(rendererPanel, GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
                     .addContainerGap())

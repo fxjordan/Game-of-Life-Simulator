@@ -4,7 +4,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -12,9 +15,11 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.Timer;
 
+import de.fjobilabs.gameoflife.SimulatorApplication;
 import de.fjobilabs.gameoflife.desktop.simulator.SimulationRendererPanel;
 import de.fjobilabs.gameoflife.desktop.simulator.SimulationState;
 import de.fjobilabs.gameoflife.desktop.simulator.Simulator;
+import javax.swing.JComboBox;
 
 /**
  * @author Felix Jordan
@@ -36,6 +41,7 @@ public class RendererInfoPanel extends JPanel {
     private JLabel upsValueLabel;
     private JLabel generationValueLabel;
     private Timer refreshTimer;
+    private JComboBox<CellRendererItem> cellRendererComboBox;
     
     public RendererInfoPanel(Simulator simulator, SimulationRendererPanel rendererPanel) {
         this.simulator = simulator;
@@ -68,22 +74,53 @@ public class RendererInfoPanel extends JPanel {
         this.generationValueLabel = new JLabel("0");
         this.generationValueLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
         
+        this.cellRendererComboBox = new JComboBox<>();
+        this.cellRendererComboBox.setModel(new DefaultComboBoxModel<>(createCellRendererItems()));
+        this.cellRendererComboBox.addItemListener(new ItemListener() {
+            
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                rendererPanel.setCellRenderer(getSelectedRendererType());
+            }
+        });
+        
+        JLabel cellRendererLabel = new JLabel("Cell Renderer:");
+        cellRendererLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        
         GroupLayout groupLayout = new GroupLayout(this);
         groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
                 .addGroup(groupLayout.createSequentialGroup().addContainerGap().addComponent(fpsLabel)
-                        .addPreferredGap(ComponentPlacement.RELATED).addComponent(fpsValueLabel).addGap(75)
+                        .addPreferredGap(ComponentPlacement.RELATED).addComponent(fpsValueLabel).addGap(43)
                         .addComponent(upsLabel).addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(upsValueLabel)
-                        .addPreferredGap(ComponentPlacement.RELATED, 316, Short.MAX_VALUE)
-                        .addComponent(generationLabel).addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(generationValueLabel).addContainerGap()));
+                        .addComponent(upsValueLabel).addGap(32).addComponent(generationLabel)
+                        .addPreferredGap(ComponentPlacement.RELATED).addComponent(generationValueLabel)
+                        .addPreferredGap(ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+                        .addComponent(cellRendererLabel).addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(cellRendererComboBox, GroupLayout.PREFERRED_SIZE, 204,
+                                GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap()));
         groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
                 .createSequentialGroup().addContainerGap()
                 .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(fpsValueLabel)
-                        .addComponent(upsLabel).addComponent(upsValueLabel).addComponent(fpsLabel)
-                        .addComponent(generationValueLabel).addComponent(generationLabel))
-                .addContainerGap(15, Short.MAX_VALUE)));
+                        .addComponent(upsLabel).addComponent(upsValueLabel).addComponent(generationValueLabel)
+                        .addComponent(generationLabel)
+                        .addComponent(cellRendererComboBox, GroupLayout.PREFERRED_SIZE,
+                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cellRendererLabel).addComponent(fpsLabel))
+                .addContainerGap(26, Short.MAX_VALUE)));
         setLayout(groupLayout);
+    }
+    
+    private CellRendererItem[] createCellRendererItems() {
+        return new CellRendererItem[] {
+                new CellRendererItem(SimulatorApplication.TEXTURE_CELL_RENDERER, "TextureCellRenderer"),
+                new CellRendererItem(SimulatorApplication.SHAPE_CELL_RENDERER, "ShapeCellRenderer"),
+                new CellRendererItem(SimulatorApplication.HIGH_PERFORMANCE_CELL_RENDERER,
+                        "HighPerformanceCellRenderer")};
+    }
+    
+    private int getSelectedRendererType() {
+        return ((CellRendererItem) this.cellRendererComboBox.getSelectedItem()).getRendererId();
     }
     
     private class RefreshListener implements ActionListener {

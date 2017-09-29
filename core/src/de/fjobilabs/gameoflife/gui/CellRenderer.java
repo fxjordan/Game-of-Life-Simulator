@@ -28,7 +28,12 @@ public interface CellRenderer {
     
     public void end();
     
-    public default void hide() {};
+    /**
+     * Should reset all OpenGL states so that another renderer can start with a
+     * clean state.
+     */
+    public default void hide() {
+    };
     
     public void dispose();
 }
