@@ -43,7 +43,7 @@ public class SimulatorFrame extends JFrame {
         setTitle("Game of Life Simulator");
         setSize(1200, 750);
         setLocationRelativeTo(null);
-        setMinimumSize(new Dimension(800, 500));
+        setMinimumSize(new Dimension(1000, 500));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         this.simulator = new Simulator();

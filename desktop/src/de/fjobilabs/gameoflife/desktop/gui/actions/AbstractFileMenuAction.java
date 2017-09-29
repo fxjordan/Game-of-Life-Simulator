@@ -11,7 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fjobilabs.gameoflife.desktop.SimulatorFrame;
+import de.fjobilabs.gameoflife.desktop.gui.actions.control.PauseSimulationAction;
 import de.fjobilabs.gameoflife.desktop.gui.dialog.SaveConfirmationDialog;
+import de.fjobilabs.gameoflife.desktop.simulator.SimulationState;
 import de.fjobilabs.gameoflife.desktop.simulator.Simulator;
 
 /**
@@ -31,6 +33,17 @@ public abstract class AbstractFileMenuAction extends AbstractSimulationAction {
             SimulatorFrame simulatorFrame, Simulator simulator) {
         super(actionManager, name, actionCommand, simulator);
         this.simulatorFrame = simulatorFrame;
+    }
+    
+    /**
+     * Pauses the simulation if there is currently a running one. This prevents
+     * a running simulation while the user interacts with a dialog window.
+     */
+    protected void pauseSimulation() {
+        if (this.simulator.getCurrentSimulationState() == SimulationState.Running) {
+            // TODO BAD CODE. Do not invoke actions this way!
+            this.actionManager.getAction(PauseSimulationAction.ACTION_COMMAND).actionPerformed(null);
+        }
     }
     
     /**

@@ -27,6 +27,7 @@ public class ExitAction extends AbstractFileMenuAction {
         if (!this.simulator.hasSimulation()) {
             return;
         }
+        pauseSimulation();
         /*
          * TODO Maybe we should only close if the simulation is not running, but
          * this is nearly the same as hasSimulationChanged(), because if the

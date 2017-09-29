@@ -32,6 +32,7 @@ public class SaveSimulationAction extends AbstractFileMenuAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        pauseSimulation();
         saveCurrentSimulation();
     }
 }

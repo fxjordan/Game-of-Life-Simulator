@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 
 import de.fjobilabs.gameoflife.desktop.gui.actions.AbstractSimulationAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.ActionManager;
+import de.fjobilabs.gameoflife.desktop.simulator.SimulationState;
 import de.fjobilabs.gameoflife.desktop.simulator.Simulator;
 
 /**
@@ -24,7 +25,8 @@ public class PauseSimulationAction extends AbstractSimulationAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (this.simulator.hasSimulation()) {
+        if (this.simulator.hasSimulation()
+                && this.simulator.getCurrentSimulationState() == SimulationState.Running) {
             this.simulator.pauseSimulation();
             setEnabled(false);
             this.actionManager.setActionEnabled(StartSimulationAction.ACTION_COMMAND, true);

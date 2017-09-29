@@ -38,6 +38,7 @@ public class SaveSimulationAsAction extends AbstractFileMenuAction {
         if (!this.simulator.hasSimulation() || !this.simulator.hasSimulationChanged()) {
             return;
         }
+        pauseSimulation();
         File file = getFileToSave();
         if (file == null) {
             return;

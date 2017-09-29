@@ -51,8 +51,6 @@ public class Simulator {
         this.simulationWriter = new SimulationWriter();
     }
     
-    
-    
     /**
      * Loads a new simulation from a {@link SimulationModel}. This model holds
      * all necessary information about the simulation, the configuration and the
@@ -267,5 +265,12 @@ public class Simulator {
             }
         }
         throw new IllegalStateException("Illegal state: " + this.currentSimulationState);
+    }
+    
+    public int getCurrentGeneration() {
+        if (this.currentSimulation == null) {
+            return 0;
+        }
+        return this.currentSimulation.getGeneration();
     }
 }

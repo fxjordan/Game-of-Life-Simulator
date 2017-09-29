@@ -46,6 +46,7 @@ public class NewSimulationAction extends AbstractFileMenuAction {
     @Override
     public void actionPerformed(ActionEvent event) {
         if (this.simulator.hasSimulation() && this.simulator.hasSimulationChanged()) {
+            pauseSimulation();
             if (!handleUnsavedChanges()) {
                 return;
             }
