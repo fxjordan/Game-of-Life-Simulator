@@ -7,18 +7,16 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class DesktopLauncher {
     
     public static void main(String[] arg) {
-//         LwjglApplicationConfiguration config = new
-//         LwjglApplicationConfiguration();
-//         new LwjglApplication(new GameOfLifeGame(), config);
-        // new LwjglApplication(new HighPerformanceCellRendererTest(), config);
         runGameOfLifeFrame();
     }
     
     private static void runGameOfLifeFrame() {
         setLookAndFeel();
         SwingUtilities.invokeLater(() -> {
+            System.out.println("starting...");
             SimulatorFrame frame = new SimulatorFrame();
             frame.setVisible(true);
+            System.out.println("started ");
         });
     }
 

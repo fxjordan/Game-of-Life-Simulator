@@ -12,13 +12,10 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
  */
 public class GameOfLifeAssetManager {
     
-    public static final String LOADING_IMAGE = "loading.png";
     public static final String DEAD_CELL = "dead_cell_simple_border_small_2.png";
     public static final String ALIVE_CELL = "alive_cell_simple_border_small_2.png";
     public static final String DEAD_CELL_NO_BORDER = "dead_cell_simple.png";
     public static final String ALIVE_CELL_NO_BORDER = "alive_cell_simple_2.png";
-//    public static final String DEAD_CELL_NO_BORDER = "dead_cell_simple.png";
-//    public static final String ALIVE_CELL_NO_BORDER = "alive_cell_simple.png";
     public static final String IDLE_IMAGE = "idle.png";
     
     private final AssetManager assetManager;
@@ -49,7 +46,6 @@ public class GameOfLifeAssetManager {
     }
     
     private void loadImages() {
-        this.assetManager.load(LOADING_IMAGE, Texture.class);
         TextureParameter textureParameter = new TextureParameter();
         textureParameter.genMipMaps = true;
         textureParameter.minFilter = TextureFilter.MipMapLinearLinear;
@@ -60,7 +56,7 @@ public class GameOfLifeAssetManager {
         this.assetManager.load(ALIVE_CELL_NO_BORDER, Texture.class, textureParameter);
         this.assetManager.load(IDLE_IMAGE, Texture.class);
     }
-
+    
     public void finishLoading() {
         this.assetManager.finishLoading();
     }

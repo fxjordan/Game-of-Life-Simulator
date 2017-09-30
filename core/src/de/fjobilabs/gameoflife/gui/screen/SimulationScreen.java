@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Logger;
 
 import de.fjobilabs.gameoflife.GameOfLifeAssetManager;
 import de.fjobilabs.gameoflife.SimulatorApplication;
+import de.fjobilabs.gameoflife.UPSCounter;
 import de.fjobilabs.gameoflife.gui.HighPerformanceCellRenderer;
 import de.fjobilabs.gameoflife.gui.ShapeCellRenderer;
 import de.fjobilabs.gameoflife.gui.TextureCellRenderer;

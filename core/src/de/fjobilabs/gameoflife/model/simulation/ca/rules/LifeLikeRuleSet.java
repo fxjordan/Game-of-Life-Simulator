@@ -26,12 +26,12 @@ import de.fjobilabs.gameoflife.model.simulation.ca.RuleSet;
  * @version 1.0
  * @since 17.09.2017 - 17:50:43
  */
-public class GameOfLifeRuleSet implements RuleSet {
+public class LifeLikeRuleSet implements RuleSet {
     
     private final String name;
     private final Rule[] rules;
     
-    public GameOfLifeRuleSet(String name, int[] surviveNeighbours, int[] birthNeighbours) {
+    public LifeLikeRuleSet(String name, int[] surviveNeighbours, int[] birthNeighbours) {
         this.name = name;
         validatePossibleNeighbours(surviveNeighbours);
         validatePossibleNeighbours(birthNeighbours);
@@ -119,15 +119,15 @@ public class GameOfLifeRuleSet implements RuleSet {
      * rule string itself. To specify a custom name use
      * {@link #parse(String, String)}<br>
      * <br>
-     * See {@link GameOfLifeRuleSet} for more information.
+     * See {@link LifeLikeRuleSet} for more information.
      * 
      * @param ruleString string representing a rule set.
      * @return A {@code GameOfLifeRuleSet} instance representing the given
      *         string.
      * 
-     * @see GameOfLifeRuleSet
+     * @see LifeLikeRuleSet
      */
-    public static GameOfLifeRuleSet parse(String ruleString) {
+    public static LifeLikeRuleSet parse(String ruleString) {
         return parse(ruleString, ruleString);
         
     }
@@ -136,16 +136,16 @@ public class GameOfLifeRuleSet implements RuleSet {
      * Creates a {@code GameOfLifeRuleSet} from a string representation in the
      * form of <i>SURVIVE</i>/<i>BIRTH</i>.<br>
      * <br>
-     * See {@link GameOfLifeRuleSet} for more information.
+     * See {@link LifeLikeRuleSet} for more information.
      * 
      * @param name The name of the rule set.
      * @param ruleString string representing a rule set.
      * @return A {@code GameOfLifeRuleSet} instance representing the given
      *         string.
      * 
-     * @see GameOfLifeRuleSet
+     * @see LifeLikeRuleSet
      */
-    public static GameOfLifeRuleSet parse(String name, String ruleString) {
+    public static LifeLikeRuleSet parse(String name, String ruleString) {
         int length = ruleString.length();
         /*
          * Maximal length is 19, because the longest possible rule is:
@@ -172,6 +172,6 @@ public class GameOfLifeRuleSet implements RuleSet {
         for (int i = 0; i < possibleBirthNeighboursLength; i++) {
             possibleBirthNeighbours[i] = Character.digit(characters[i + separatorIndex + 1], 10);
         }
-        return new GameOfLifeRuleSet(name, possibleSurviveNeighbours, possibleBirthNeighbours);
+        return new LifeLikeRuleSet(name, possibleSurviveNeighbours, possibleBirthNeighbours);
     }
 }

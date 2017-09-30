@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fjobilabs.gameoflife.desktop.simulator.SimulationConfiguration;
-import de.fjobilabs.gameoflife.model.simulation.ca.rules.GameOfLifeRuleSet;
+import de.fjobilabs.gameoflife.model.simulation.ca.rules.LifeLikeRuleSet;
 
 /**
  * @author Felix Jordan
@@ -337,7 +337,7 @@ public class NewSimulationDialog extends JDialog implements ActionListener {
     public boolean isRuleStringValid(String ruleString) {
         // TODO BAD CODE! Implement isValid(String) method for parser.
         try {
-            GameOfLifeRuleSet.parse(ruleString);
+            LifeLikeRuleSet.parse(ruleString);
             return true;
         } catch (Exception e) {
             return false;

@@ -19,7 +19,7 @@ import de.fjobilabs.gameoflife.model.World;
 import de.fjobilabs.gameoflife.model.simulation.CellularAutomatonSimulation;
 import de.fjobilabs.gameoflife.model.simulation.LangtonsAntSimulation;
 import de.fjobilabs.gameoflife.model.simulation.ca.RuleSet;
-import de.fjobilabs.gameoflife.model.simulation.ca.rules.GameOfLifeRuleSet;
+import de.fjobilabs.gameoflife.model.simulation.ca.rules.LifeLikeRuleSet;
 import de.fjobilabs.gameoflife.model.simulation.ca.rules.StandardGameOfLifeRuleSet;
 import de.fjobilabs.gameoflife.model.worlds.FixedSizeBorderedWorld;
 import de.fjobilabs.gameoflife.model.worlds.FixedSizeTorusWorld;
@@ -113,7 +113,7 @@ public class Simulator {
         case SimulationConfiguration.LIFE_LIKE_RULE_SET:
             String ruleString = config.getRuleString();
             try {
-                return GameOfLifeRuleSet.parse(ruleString);
+                return LifeLikeRuleSet.parse(ruleString);
             } catch (IllegalArgumentException e) {
                 throw new SimulatorException("Invalid rule string: " + ruleString);
             }

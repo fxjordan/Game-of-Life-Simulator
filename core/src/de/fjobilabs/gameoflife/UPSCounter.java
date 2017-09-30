@@ -1,4 +1,4 @@
-package de.fjobilabs.gameoflife.gui.screen;
+package de.fjobilabs.gameoflife;
 
 /**
  * @author Felix Jordan
