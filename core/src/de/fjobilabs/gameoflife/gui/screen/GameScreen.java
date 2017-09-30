@@ -10,8 +10,8 @@ import com.badlogic.gdx.utils.Logger;
 
 import de.fjobilabs.gameoflife.GameOfLifeAssetManager;
 import de.fjobilabs.gameoflife.GameOfLifeScreenManager;
-import de.fjobilabs.gameoflife.gui.SimulationController;
 import de.fjobilabs.gameoflife.gui.WorldRenderer;
+import de.fjobilabs.gameoflife.gui.controller.SimulationController;
 import de.fjobilabs.gameoflife.model.Simulation;
 import de.fjobilabs.gameoflife.model.World;
 import de.fjobilabs.gameoflife.model.simulation.CellularAutomatonSimulation;

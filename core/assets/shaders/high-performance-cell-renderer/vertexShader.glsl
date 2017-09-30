@@ -3,6 +3,8 @@ attribute float a_cellState;
 
 uniform vec4 u_deadCellColor;
 uniform vec4 u_aliveCellColor;
+uniform vec4 u_cellAliveOverlayDeadColor;
+uniform vec4 u_overlayAliveColor;
 
 varying vec4 v_position;
 varying vec4 v_color;
@@ -10,6 +12,10 @@ varying vec4 v_color;
 void main() {
     if (a_cellState == 1.0) {
         v_color = u_aliveCellColor;
+    } else if (a_cellState == 2.0) {
+        v_color = u_cellAliveOverlayDeadColor;
+    } else if (a_cellState == 3.0) {
+        v_color = u_overlayAliveColor;
     } else {
         v_color = u_deadCellColor;
     }

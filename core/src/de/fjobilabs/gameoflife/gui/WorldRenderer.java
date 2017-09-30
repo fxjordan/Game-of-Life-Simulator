@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 
 import de.fjobilabs.gameoflife.GameOfLifeAssetManager;
+import de.fjobilabs.gameoflife.gui.controller.OverlayWorld;
 import de.fjobilabs.gameoflife.model.World;
 import de.fjobilabs.libgdx.util.LoggerFactory;
 
@@ -23,6 +24,7 @@ public class WorldRenderer {
     private static final Logger logger = LoggerFactory.getLogger(WorldRenderer.class, Logger.DEBUG);
     
     private World world;
+    private OverlayWorld overlay;
     private OrthographicCamera camera;
     private FillViewport viewport;
     private CellRenderer cellRenderer;
@@ -47,11 +49,21 @@ public class WorldRenderer {
         
         this.cellRenderer.begin(this.camera);
         
+        // Renders the actual world
         int worldWidth = this.world.getWidth();
         int worldHeight = this.world.getHeight();
         for (int x = 0; x < worldWidth; x++) {
             for (int y = 0; y < worldHeight; y++) {
                 this.cellRenderer.drawCell(x, y, this.world.getCellState(x, y));
+            }
+        }
+        
+        // Renders the overly used by the controller
+        if (this.overlay != null) {
+            for (int x = 0; x < worldWidth; x++) {
+                for (int y = 0; y < worldHeight; y++) {
+                    this.cellRenderer.drawOverlayCell(x, y, this.overlay.getCellState(x, y));
+                }
             }
         }
         
@@ -68,6 +80,14 @@ public class WorldRenderer {
         this.camera.position.y = world.getCenterY();
         this.camera.update();
         this.cellRenderer.configure(world.getWidth(), world.getHeight());
+    }
+    
+    public void setOverlay(OverlayWorld overlay) {
+        if (overlay != null && (overlay.getWidth() != this.world.getWidth()
+                || overlay.getHeight() != this.world.getHeight())) {
+            throw new IllegalArgumentException("Overlay world is too big");
+        }
+        this.overlay = overlay;
     }
     
     public void setCellRenderer(CellRenderer cellRenderer) {

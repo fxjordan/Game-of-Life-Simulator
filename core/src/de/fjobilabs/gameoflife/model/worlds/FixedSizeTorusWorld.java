@@ -81,6 +81,15 @@ public class FixedSizeTorusWorld implements World {
         return x >= 0 && x < this.width && y >= 0 && y < this.height;
     }
     
+    @Override
+    public void clear() {
+        for (int x=0; x<this.width; x++) {
+            for (int y=0; y<this.height; y++) {
+                this.cells[x][y] = Cell.DEAD;
+            }
+        }
+    }
+    
     private void setNeighbourCellStates(CellContext cellContext, int x, int y) {
         int[] neighbours = cellContext.getNeighbourCellStates();
         int leftX;
@@ -103,28 +112,6 @@ public class FixedSizeTorusWorld implements World {
         
         // We need to set this to update the aliveNeighbours field
         cellContext.setNeighbourCellStates(neighbours);
-    }
-    
-    private int[] getNeighbourCellStates(CellContext cellContext, int x, int y) {
-        int[] neighbours = cellContext.getNeighbourCellStates();
-        int leftX;
-        int rightX;
-        int bottomY;
-        int topY;
-        leftX = x == 0 ? this.width - 1 : x - 1;
-        rightX = x == this.width - 1 ? 0 : x + 1;
-        bottomY = y == 0 ? this.height - 1 : y - 1;
-        topY = y == this.height - 1 ? 0 : y + 1;
-        
-        neighbours[0] = this.cells[leftX][topY];
-        neighbours[1] = this.cells[x][topY];
-        neighbours[2] = this.cells[rightX][topY];
-        neighbours[3] = this.cells[rightX][y];
-        neighbours[4] = this.cells[rightX][bottomY];
-        neighbours[5] = this.cells[x][bottomY];
-        neighbours[6] = this.cells[leftX][bottomY];
-        neighbours[7] = this.cells[leftX][y];
-        return neighbours;
     }
     
     private void validateCellPosition(int x, int y) {

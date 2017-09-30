@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 
+import de.fjobilabs.gameoflife.gui.controller.SimulationController;
 import de.fjobilabs.gameoflife.gui.screen.IdleScreen;
 import de.fjobilabs.gameoflife.gui.screen.SimulationScreen;
 import de.fjobilabs.gameoflife.model.Simulation;
@@ -68,8 +69,8 @@ public class SimulatorApplication extends Game {
         this.simulationScreen.setCellRenderer(rendererType);
     }
     
-    public void setEditMode(boolean enabled) {
-        this.simulationScreen.getSimulationController().setEditMode(enabled);
+    public SimulationController getSimulationController() {
+        return this.simulationScreen.getSimulationController();
     }
     
     /**

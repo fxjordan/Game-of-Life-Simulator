@@ -53,6 +53,10 @@ public class RLEPattern implements Pattern {
         return this.tokens;
     }
     
+    public String getName() {
+        return name;
+    }
+    
     private void applyTokenRow(World world, Token[] tokens, int startX, int startY) {
         int currentX = startX;
         for (int i = 0; i < tokens.length; i++) {

@@ -42,6 +42,7 @@ public class Simulator {
     private File currentSimulationFile;
     private SimulationModel currentSimulationModel;
     private int lastSavedGeneration;
+    private WorldEditor worldEditor;
     
     private ObjectMapper objectMapper;
     private WorldContentLoader worldContentLoader;
@@ -49,6 +50,7 @@ public class Simulator {
     
     public Simulator() {
         this.simulatorApplication = new SimulatorApplication();
+        this.worldEditor = new WorldEditor(this.simulatorApplication);
         this.objectMapper = new ObjectMapper();
         this.worldContentLoader = new WorldContentLoader();
         this.simulationWriter = new SimulationWriter();
@@ -135,10 +137,12 @@ public class Simulator {
     
     private void configure(SimulationModel simulationModel) {
         if (simulationModel.getGeneration() > 0) {
-            this.simulatorApplication.setEditMode(false);
+            this.simulatorApplication.getSimulationController().setEditMode(false);
+            this.worldEditor.setWorld(null);
             this.currentSimulationState = SimulationState.Paused;
         } else {
-            this.simulatorApplication.setEditMode(true);
+            this.simulatorApplication.getSimulationController().setEditMode(true);
+            this.worldEditor.setWorld(this.currentSimulation.getWorld());
             this.currentSimulationState = SimulationState.Created;
         }
         applyConfiguration(simulationModel.getConfig());
@@ -157,6 +161,10 @@ public class Simulator {
     
     SimulatorApplication getSimulatorApplication() {
         return simulatorApplication;
+    }
+    
+    public WorldEditor getWorldEditor() {
+        return worldEditor;
     }
     
     public boolean hasSimulation() {
@@ -201,7 +209,8 @@ public class Simulator {
     public void startSimulation() {
         checkSimulationState(SimulationState.Created, SimulationState.Paused);
         this.currentSimulation.setRunning(true);
-        this.simulatorApplication.setEditMode(false);
+        this.simulatorApplication.getSimulationController().setEditMode(false);
+        this.worldEditor.setWorld(null);
         this.currentSimulationState = SimulationState.Running;
     }
     
@@ -221,7 +230,8 @@ public class Simulator {
          * can be performed or even worse, the application will crash because
          * the two threads access one object to the same time.
          */
-        this.simulatorApplication.setEditMode(false);
+        this.simulatorApplication.getSimulationController().setEditMode(false);
+        this.worldEditor.setWorld(null);
         this.currentSimulation.setRunning(true);
         this.currentSimulation.update();
         this.currentSimulation.setRunning(false);

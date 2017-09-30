@@ -102,6 +102,15 @@ public class FixedSizeBorderedWorld implements World {
         return x >= 0 && x < this.width && y >= 0 && y < this.height;
     }
     
+    @Override
+    public void clear() {
+        for (int x=0; x<this.width; x++) {
+            for (int y=0; y<this.height; y++) {
+                this.cells[x][y] = Cell.DEAD;
+            }
+        }
+    }
+    
     private void validateCellPosition(int x, int y) {
         if (!isCellPositionValid(x, y)) {
             throw new IllegalArgumentException("Invalid cell position: x=" + x + ", y=" + y);

@@ -19,6 +19,8 @@ import de.fjobilabs.gameoflife.desktop.gui.actions.control.PauseSimulationAction
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.StartSimulationAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.StepBackwardAction;
 import de.fjobilabs.gameoflife.desktop.gui.actions.control.StepForwardAction;
+import de.fjobilabs.gameoflife.desktop.gui.actions.worldedit.AddPatternAction;
+import de.fjobilabs.gameoflife.desktop.gui.actions.worldedit.ClearWorldAction;
 import de.fjobilabs.gameoflife.desktop.simulator.Simulator;
 import de.fjobilabs.gameoflife.desktop.simulator.SimulatorException;
 
@@ -97,13 +99,19 @@ public class OpenSimulationAction extends AbstractFileMenuAction {
     }
     
     private void configureActions() {
+        // Control actions
         this.actionManager.setActionEnabled(StartSimulationAction.ACTION_COMMAND, true);
         this.actionManager.setActionEnabled(PauseSimulationAction.ACTION_COMMAND, false);
         this.actionManager.setActionEnabled(StepForwardAction.ACTION_COMMAND, true);
         this.actionManager.setActionEnabled(StepBackwardAction.ACTION_COMMAND, true);
         this.actionManager.setActionEnabled(ChangeUPSAction.ACTION_COMMAND, true);
+        // File actions
         this.actionManager.setActionEnabled(CloseSimulationAction.ACTION_COMMAND, true);
         this.actionManager.setActionEnabled(SaveSimulationAction.ACTION_COMMAND, true);
         this.actionManager.setActionEnabled(SaveSimulationAsAction.ACTION_COMMAND, true);
+        // World edit actions
+        boolean editingEnabled = this.simulator.getWorldEditor().isEditingEnabled();
+        this.actionManager.setActionEnabled(ClearWorldAction.ACTION_COMMAND, editingEnabled);
+        this.actionManager.setActionEnabled(AddPatternAction.ACTION_COMMAND, editingEnabled);
     }
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.VertexBufferObject;
 import com.badlogic.gdx.math.Matrix4;
 
+import de.fjobilabs.gameoflife.model.Cell;
 import de.fjobilabs.libgdx.graphics.ExtendedShaderProgram;
 
 /**
@@ -25,11 +26,19 @@ public class HighPerformanceCellRenderer implements CellRenderer {
     
     private static final Color DEAD_CELL_COLOR = new Color(117f / 255f, 111f / 255f, 85f / 255f, 1f);
     private static final Color ALIVE_CELL_COLOR = new Color(255f / 255f, 216f / 255f, 0f / 255f, 1f);
+    private static final Color CELL_ALIVE_OVERLAY_DEAD_COLOR = new Color(102f / 255f, 58f / 255f, 0f / 255f,
+            1f);
+    private static final Color OVERLAY_ALIVE_COLOR = new Color(255f / 255f, 100f / 255f, 0f / 255f, 1f);
+    
+    private static final float DEAD_CELL = 0.0f;
+    private static final float ALIVE_CELL = 1.0f;
+    private static final float CELL_ALIVE_OVERLAY_DEAD = 2.0f;
+    private static final float OVERLAY_ALIVE = 3.0f;
     
     private static final VertexAttribute CELL_POSITION_VERTEX_ATTRIBUTE = new VertexAttribute(Usage.Position,
             2, "a_position");
     private static final VertexAttribute CELL_STATE_VERTEX_ATTRIBUTE = new VertexAttribute(Usage.Generic, 1,
-            GL20.GL_FLOAT, true, "a_cellState");
+            GL20.GL_FLOAT, false, "a_cellState");
     
     private int worldWidth;
     private int worldHeight;
@@ -42,6 +51,8 @@ public class HighPerformanceCellRenderer implements CellRenderer {
     private int u_projViewTransLocation;
     private int u_deadCellColorLocation;
     private int u_aliveCellColorLocation;
+    private int u_cellAliveOverlayDeadColorLocation;
+    private int u_overlayAliveColorLocation;
     private Matrix4 projectionViewMatrix;
     
     public HighPerformanceCellRenderer() {
@@ -50,10 +61,14 @@ public class HighPerformanceCellRenderer implements CellRenderer {
         this.u_projViewTransLocation = this.shaderProgram.getUniformLocation("u_projViewTrans");
         this.u_deadCellColorLocation = this.shaderProgram.getUniformLocation("u_deadCellColor");
         this.u_aliveCellColorLocation = this.shaderProgram.getUniformLocation("u_aliveCellColor");
+        this.u_cellAliveOverlayDeadColorLocation = this.shaderProgram.getUniformLocation("u_cellAliveOverlayDeadColor");
+        this.u_overlayAliveColorLocation = this.shaderProgram.getUniformLocation("u_overlayAliveColor");
         
         this.shaderProgram.begin();
         this.shaderProgram.setUniformf(this.u_deadCellColorLocation, DEAD_CELL_COLOR);
         this.shaderProgram.setUniformf(this.u_aliveCellColorLocation, ALIVE_CELL_COLOR);
+        this.shaderProgram.setUniformf(this.u_cellAliveOverlayDeadColorLocation, CELL_ALIVE_OVERLAY_DEAD_COLOR);
+        this.shaderProgram.setUniformf(this.u_overlayAliveColorLocation, OVERLAY_ALIVE_COLOR);
         this.shaderProgram.end();
     }
     
@@ -87,6 +102,18 @@ public class HighPerformanceCellRenderer implements CellRenderer {
     @Override
     public void drawCell(int x, int y, int state) {
         this.cellStates[this.worldWidth * y + x] = state;
+    }
+    
+    @Override
+    public void drawOverlayCell(int x, int y, int state) {
+        float actualCellState = this.cellStates[this.worldWidth * y + x];
+        float combinedState = actualCellState;
+        if (state == Cell.ALIVE) {
+            combinedState = OVERLAY_ALIVE;
+        } else if (state == Cell.DEAD && actualCellState == ALIVE_CELL) {
+            combinedState = CELL_ALIVE_OVERLAY_DEAD;
+        }
+        this.cellStates[this.worldWidth * y + x] = combinedState;
     }
     
     @Override

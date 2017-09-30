@@ -1,4 +1,4 @@
-package de.fjobilabs.gameoflife.gui;
+package de.fjobilabs.gameoflife.gui.controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
@@ -7,9 +7,11 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Logger;
 
+import de.fjobilabs.gameoflife.gui.WorldRenderer;
 import de.fjobilabs.gameoflife.model.Cell;
 import de.fjobilabs.gameoflife.model.Simulation;
 import de.fjobilabs.gameoflife.model.World;
+import de.fjobilabs.gameoflife.model.simulation.ca.Pattern;
 import de.fjobilabs.libgdx.util.LoggerFactory;
 
 /**
@@ -31,12 +33,17 @@ public class SimulationController extends InputAdapter {
     private static final int EDIT_TYPE_NONE = -1;
     private static final int EDIT_TYPE_ADD = 0;
     private static final int EDIT_TYPE_REMOVE = 1;
+    private static final int EDIT_TYPE_ADD_PATTERN = 2;
     
     private Simulation simulation;
+    private OverlayWorld overlay;
     private WorldRenderer worldRenderer;
     private Vector2 touchPoint;
     private boolean editMode;
     private int currentEditType;
+    
+    /** The pattern that is currently placed in the world. */
+    private Pattern currentPattern;
     
     public SimulationController(WorldRenderer worldRenderer) {
         this.worldRenderer = worldRenderer;
@@ -52,11 +59,42 @@ public class SimulationController extends InputAdapter {
     public void setEditMode(boolean enabled) {
         this.editMode = enabled;
         this.currentEditType = EDIT_TYPE_NONE;
+        if (enabled && this.simulation != null) {
+            createOverlay();
+            this.worldRenderer.setOverlay(this.overlay);
+        } else {
+            this.worldRenderer.setOverlay(null);
+        }
+    }
+    
+    private void createOverlay() {
+        World world = this.simulation.getWorld();
+        this.overlay = new OverlayWorld(world.getWidth(), world.getHeight());
+    }
+    
+    public void startAddPattern(Pattern pattern) {
+        this.currentPattern = pattern;
+        this.currentEditType = EDIT_TYPE_ADD_PATTERN;
+        /*
+         * Add pattern at the current mouse position to the overly. If we wait
+         * for the first mouse move event the pattern is not visible until the
+         * user starts moving the mouse.
+         */
+        applyPattern(this.overlay, Gdx.input.getX(), Gdx.input.getY(), this.currentPattern);
+    }
+    
+    public void cancelAddPattern() {
+        this.currentPattern = null;
+        this.currentEditType = EDIT_TYPE_NONE;
+        this.overlay.clear();
     }
     
     public void reset() {
         this.editMode = false;
         this.currentEditType = EDIT_TYPE_NONE;
+        this.currentPattern = null;
+        this.overlay = null;
+        this.worldRenderer.setOverlay(null);
     }
     
     public void update(float delta) {
@@ -137,6 +175,34 @@ public class SimulationController extends InputAdapter {
             this.currentEditType = EDIT_TYPE_NONE;
             return true;
         }
+        if (this.currentEditType == EDIT_TYPE_ADD_PATTERN) {
+            if (button == Buttons.LEFT) {
+                applyPattern(this.simulation.getWorld(), screenX, screenY, this.currentPattern);
+                this.overlay.clear();
+                this.currentPattern = null;
+                this.currentEditType = EDIT_TYPE_NONE;
+                return true;
+            } else if (button == Buttons.RIGHT) {
+                // Cancel and clear the overly
+                cancelAddPattern();
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        if (this.simulation == null) {
+            return false;
+        }
+        if (this.currentEditType == EDIT_TYPE_NONE || !this.editMode) {
+            return false;
+        }
+        if (this.currentEditType == EDIT_TYPE_ADD_PATTERN) {
+            this.overlay.clear();
+            applyPattern(this.overlay, screenX, screenY, this.currentPattern);
+        }
         return false;
     }
     
@@ -151,6 +217,35 @@ public class SimulationController extends InputAdapter {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Applies a {@link Pattern} to a world, so that the patterns center is at
+     * the mouses screen coordinates.
+     * 
+     * @param world
+     * @param screenX
+     * @param screenY
+     * @param pattern
+     */
+    private void applyPattern(World world, int screenX, int screenY, Pattern pattern) {
+        this.touchPoint.set(screenX, screenY);
+        this.worldRenderer.touchToWorld(this.touchPoint);
+        int worldWidth = this.simulation.getWorld().getWidth();
+        int worldHeight = this.simulation.getWorld().getHeight();
+        int x = ((int) this.touchPoint.x) - pattern.getWidth() / 2;
+        if (x < 0) {
+            x = 0;
+        } else if (x + pattern.getWidth() > worldWidth) {
+            x = worldWidth - pattern.getWidth();
+        }
+        int y = ((int) this.touchPoint.y) + pattern.getHeight() / 2;
+        if (y > worldHeight - 1) {
+            y = worldHeight - 1;
+        } else if (y - pattern.getHeight() -1 < 0) {
+            y = pattern.getHeight() - 1;
+        }
+        pattern.apply(world, x, y);
     }
     
     @Override

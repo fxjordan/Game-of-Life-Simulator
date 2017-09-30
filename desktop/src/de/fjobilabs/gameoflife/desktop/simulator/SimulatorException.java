@@ -7,9 +7,6 @@ package de.fjobilabs.gameoflife.desktop.simulator;
  */
 public class SimulatorException extends Exception {
     
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1664787803893722314L;
     
     public SimulatorException() {

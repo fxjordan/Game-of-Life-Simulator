@@ -28,4 +28,6 @@ public interface World {
     public void setCellState(int x, int y, int state);
     
     public boolean isCellPositionValid(int x, int y);
+    
+    public void clear();
 }

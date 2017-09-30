@@ -26,6 +26,17 @@ public interface CellRenderer {
     
     public void drawCell(int x, int y, int state);
     
+    /**
+     * Draws an overlay cell over the actual cell of the world. Can be used to
+     * draw a pattern that is moved in the world.
+     * 
+     * @param x
+     * @param y
+     * @param state
+     */
+    public default void drawOverlayCell(int x, int y, int state) {
+    }
+    
     public void end();
     
     /**
